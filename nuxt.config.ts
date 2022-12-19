@@ -29,31 +29,33 @@ export default defineNuxtConfig({
     components: true,
     modules: [
         "@nuxtjs/tailwindcss",
-        /*["@nuxtjs/i18n", {
-            defaultLocale: "fr",
+        ["@nuxtjs/i18n", {
+            defaultLocale: "en",
             lazy: true,
             langDir: "lang",
             detectBrowserLanguage: {
                 useCookie: true,
                 cookieKey: "lang",
                 redirectOn: "no_prefix",
-                fallbackLocale: "fr",
-                alwaysRedirect: true
+                fallbackLocale: "en",
+                alwaysRedirect: false
             },
             locales: [
                 {
                     code: "en",
                     iso: "en-US",
-                    file: "en-US.json"
+                    file: "en-US.json",
+                    name: "English"
                 },
                 {
                     code: "fr",
                     iso: "fr-FR",
-                    file: "fr-FR.json"
+                    file: "fr-FR.json",
+                    name: "Français"
                 }
-            ],
+            ],   
             baseUrl: "https://gravitalia.gravitalia.workers.dev"
-        }],*/
+        }],
         ["@nuxtjs/color-mode", {
             preference: 'system',
             fallback: 'light',
