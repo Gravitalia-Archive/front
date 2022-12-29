@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Navbar />
+        <Navbar @userData="callback" />
         <div align="center">
             <div class="h-[73vh] md:h-[75vh] xl:h-[80vh]">
                 <h1 class="text-5xl md:text-8xl text-dark font-extrabold max-w-4xl">{{ $t("A better way to connect you") }}</h1>
@@ -14,7 +14,7 @@
                         {{ $t("Sign up") }}
                     </a>
                     <div class="pl-7"></div>
-                    <a href="https://account-1hw.pages.dev/oauth2/authorize?response_type=code&client_id=?&scope=user" class="rounded px-4 py-2 m-1 border border-gray-200 dark:border-gray-800 hover:border-gray-200">
+                    <a href="https://api.gravitalia.com/callback" class="rounded px-4 py-2 m-1 border border-gray-200 dark:border-gray-800 hover:border-gray-200">
                         {{ $t("Sign in") }}
                     </a>
                 </div>
@@ -61,7 +61,7 @@
         </div>
         <br />
         <div class="flex justify-center">
-            <a href="https://account-1hw.pages.dev/oauth2/authorize?response_type=code&client_id=?&scope=user" class="rounded px-4 py-2 m-1 border border-gray-200 dark:border-gray-800 hover:border-gray-200">
+            <a href="https://api.gravitalia.com/callback" class="rounded px-4 py-2 m-1 border border-gray-200 dark:border-gray-800 hover:border-gray-200">
                 {{ $t("Sign in") }}
             </a>
         </div>
@@ -96,6 +96,10 @@
             { children: `const idList=["take","publish","share","like"];let last="take";setInterval(()=>{document.getElementById(last).classList.add("hidden"),(last=idList[idList.indexOf(last)+1])||(last="take"),document.getElementById(last).classList.remove("hidden")},2580);` }
         ]
     });
+
+    function callback(data) {
+        console.log("test", data)
+    }
 </script>
 
 <style>
