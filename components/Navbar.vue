@@ -19,8 +19,8 @@
                     <NuxtLink :class="path === '/' ? 'UnderlineNav-item UnderlineNav-item-selected' : 'UnderlineNav-item'" to="/" prefetch>{{ $t("Home") }}</NuxtLink>
                     <NuxtLink :class="path === '/explore' ? 'UnderlineNav-item UnderlineNav-item-selected' : 'UnderlineNav-item'" to="/explore" prefetch>{{ $t("Explore") }}</NuxtLink>
 
-                    <div class="relative mt-1 ml-60 text-gray-600">
-                        <input type="search" :placeholder='$t("Search")' class="bg-white h-10 px-5 pr-10 rounded-full text-sm focus:outline-none" />
+                    <div class="relative mt-1 ml-16 xl:ml-60 text-gray-600">
+                        <input type="search" :placeholder='$t("Search")' class="bg-white h-10 px-11 pr-10 xl:pr-48 rounded-full text-sm focus:outline-none" />
                         <button aria-label="Search bar" class="absolute right-0 top-0 mt-3 mr-4">
                             <svg class="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 56.966 56.966"  xmlSpace="preserve" width="512px" height="512px">
                             <path d="M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23  s10.318,23,23,23c4.761,0,9.298-1.436,13.177-4.162l13.661,14.208c0.571,0.593,1.339,0.92,2.162,0.92  c0.779,0,1.518-0.297,2.079-0.837C56.255,54.982,56.293,53.08,55.146,51.887z M23.984,6c9.374,0,17,7.626,17,17s-7.626,17-17,17  s-17-7.626-17-17S14.61,6,23.984,6z"/>
@@ -60,7 +60,7 @@
             </div>
         </div>
     </div>
-    <br /><br /><br />
+    <br /><br />
 </template>
 
 <script>
@@ -116,4 +116,13 @@
         outline: 1px dotted transparent;
         outline-offset: -1px;
     }
+
+    /* clears the ‘X’ from Internet Explorer */
+    input[type=search]::-ms-clear { display: none; width : 0; height: 0; }
+    input[type=search]::-ms-reveal { display: none; width : 0; height: 0; }
+    /* clears the ‘X’ from Chrome */
+    input[type="search"]::-webkit-search-decoration,
+    input[type="search"]::-webkit-search-cancel-button,
+    input[type="search"]::-webkit-search-results-button,
+    input[type="search"]::-webkit-search-results-decoration { display: none; }
 </style>
