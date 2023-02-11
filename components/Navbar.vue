@@ -75,7 +75,7 @@
         async created() {
             const token = useCookie("token");
             if (token.value) {
-                const { data } = await useFetch(`http://173.212.247.156/users/${JSON.parse(atob(token.value.split(".")[1])).sub}`, { mode: "no-cors" });
+                const { data } = await useFetch(`http://localhost:1111/users/${JSON.parse(atob(token.value.split(".")[1])).sub}`, {});
                 this.user = data;
             }
 
