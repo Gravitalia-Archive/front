@@ -69,6 +69,6 @@ export default defineNuxtConfig({
     ], 
 
     experimental: {
-        noScripts: true // Soon true, I hope
+        noScripts: false // Soon true, I hope
     }
 });
