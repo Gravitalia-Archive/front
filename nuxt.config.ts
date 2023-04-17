@@ -31,12 +31,13 @@ export default defineNuxtConfig({
         "@nuxtjs/tailwindcss",
         ["@nuxtjs/i18n", {
             defaultLocale: "en",
-            lazy: true,
+            lazy: false,
             langDir: "lang",
+            strategy: "no_prefix",
             detectBrowserLanguage: {
                 useCookie: true,
                 cookieKey: "lang",
-                redirectOn: "no_prefix",
+                redirectOn: "root",
                 fallbackLocale: "en",
                 alwaysRedirect: true
             },
@@ -54,7 +55,7 @@ export default defineNuxtConfig({
                     name: "Français"
                 }
             ],   
-            baseUrl: "https://gravitalia.gravitalia.workers.dev"
+            baseUrl: "https://www.gravitalia.com"
         }],
         ["@nuxtjs/color-mode", {
             preference: 'system',
