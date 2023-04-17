@@ -4,7 +4,7 @@
 		<a href="https://blog.gravitalia.com/" target="_blank" class="hover:underline underline-offset-1 cursor-pointer">{{ $t("Blogs") }}</a>
 		<a href="https://jobs.gravitalia.com/" target="_blank" class="hover:underline underline-offset-1 cursor-pointer">{{ $t("Jobs") }}</a>
 		<a href="https://support.gravitalia.com/" target="_blank" class="hover:underline underline-offset-1 cursor-pointer">{{ $t("Support") }}</a>
-		<a href="/terms" rel="prefetch" class="hover:underline underline-offset-1 cursor-pointer">{{ $t("Terms") }}</a>
-		<a href="/privacy" rel="prefetch" class="hover:underline underline-offset-1 cursor-pointer">{{ $t("Privacy") }}</a>
+		<a href="https://account.gravitalia.com/terms" rel="prefetch" class="hover:underline underline-offset-1 cursor-pointer">{{ $t("Terms") }}</a>
+		<a href="https://account.gravitalia.com/privacy" rel="prefetch" class="hover:underline underline-offset-1 cursor-pointer">{{ $t("Privacy") }}</a>
 	</div>
 </template>
