@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/setup-node@v3
         with:
-          node-version: 'latest'
+          node-version: 19
 
       - name: Checkout
         uses: actions/checkout@v3
@@ -19,14 +19,14 @@ jobs:
         uses: actions/cache@v3
         with:
           path: node_modules
-          key: ubuntu-latest-node-vlatest-deps-${{ hashFiles(format('{0}{1}', github.workspace, '/package-lock.json')) }}
+          key: ubuntu-latest-node-v19-deps-${{ hashFiles(format('{0}{1}', github.workspace, '/yarn.lock')) }}
 
       - name: Install Dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: yarn
 
       - name: Build
-        run: npm run build
+        run: yarn build
         env:
           NITRO_PRESET: cloudflare
 
