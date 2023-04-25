@@ -1,32 +1,32 @@
 <template>
-    <Navbar @userData="callback" />
+    <Navbar />
     <div class="flex justify-center">
         <div class="flex h-fit gap-10 w-[22%]">
-        <img class="rounded-full w-32 h-32" src="/avatar/H.webp" draggable="false" alt="" />
+        <img class="rounded-full w-32 h-32" :src="user?.avatar ? `https://cdn.gravitalia.com/${user.avatar}` : `/avatar/${user?.username[0]?.toUpperCase()||'U'}.webp`" draggable="false" alt="" />
 
         <div class="grid gap-3 w-full">
           <div>
             <div class="flex">
-                <h1 class="text-xl font-light">{{ user.username }}</h1>
-                <span class="pl-4"></span><button v-if="user.vanity !== vanity" class="w-46 bg-blue-500 dark:bg-blue-600 p-1.5 text-white text-xs rounded-md font-semibold">S'abonner</button>
-                <button v-else class="w-46 bg-gray-200 dark:bg-gray-400 p-1.5 text-dark text-xs rounded-md font-semibold">Éditer le profil</button>
+                <h1 class="text-xl font-light">{{ user?.username || "Unknown account" }}</h1>
+                <span class="pl-4"></span><button v-if="user?.vanity !== vanity" class="w-46 bg-blue-500 dark:bg-blue-600 p-1.5 text-white text-xs rounded-md font-semibold">{{ $t("Subscribe") }}</button>
+                <button v-else class="w-46 bg-gray-200 dark:bg-gray-400 p-1.5 text-dark text-xs rounded-md font-semibold">{{ $t("Parameters") }}</button>
                 <!-- <span class="pl-4"></span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7 cursor-pointer"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" /></svg> -->
             </div>
             <div class="ul flex w-full justify-between">
-              <p><b>{{ gv_user.posts.length }}</b> {{ gv_user.posts.length > 1 ? "photos": "photo" }}</p>
-              <p><b>{{ gv_user.followers }}</b> {{ gv_user.followers > 1 ? "abonnés": "abonné" }}</p>
-              <p><b>{{ gv_user.following }}</b> {{ gv_user.following > 1 ? "abonnements": "abonnement" }}</p>
+              <p><b>{{ gv_user?.posts?.length||0 }}</b> {{ gv_user?.posts?.length||0 > 1 ? $t("photos") : $t("photo") }}</p>
+              <p><b>{{ gv_user?.followers||0 }}</b> {{ gv_user?.followers||0 > 1 ? $t("followers") : $t("follower") }}</p>
+              <p><b>{{ gv_user?.following||0 }}</b> {{ gv_user?.following||0 > 1 ? $t("subscriptions") : $t("subscription") }}</p>
             </div>
           </div>
-          <p><b class="pb-6">{{ user.vanity }}</b><br />{{ user.bio }}</p>
+          <p><b class="pb-6">{{ user?.vanity  }}</b><br />{{ user?.bio }}</p>
         </div>
   </div>
     </div>
     <hr class="my-8 h-px w-1/2 bg-gray-200 dark:bg-gray-700 border-0  mx-auto">
     <div class="pt-4 flex justify-center">
         <div class="w-1/2 grid grid-cols-3 space-x-7">
-            <div v-for="post in gv_user.posts">
-                <a :href="'/'+user.vanity+'/'+post.id" class="flex justify-start -space-x-[21.5rem]">
+            <div v-for="post in gv_user?.posts||[]">
+                <a :href="'/'+user?.vanity+'/'+post.id" class="flex justify-start -space-x-[21.5rem]">
                     <img class="w-[21.5rem] h-[21.5rem] aspect-square" :onmouseenter="'document.getElementById('+post.id+').classList.remove(\'hidden\')'" :onmouseleave="'document.getElementById('+post.id+').classList.add(\'hidden\')'" draggable="false" :alt="post.text" src="/test.webp" />
                     <div :id="post.id" class="hidden bg-zinc-700/60 w-[21.5rem] h-[21.5rem] aspect-square inset-0 flex justify-center items-center text-white">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
@@ -38,10 +38,27 @@
             </div>
         </div>
     </div>
+    <div v-if="(gv_user?.posts||[]).length === 0">
+            <div class="flex flex-col items-center justify-center">
+                <div v-if="user?.vanity === vanity">
+                    <img alt="" src="/post.svg" width="200" height="200" />
+                    <p class="pt-8 text-xl font-medium">{{ $t("On your marks, get set, shoot!") }}</p>
+                    <a href="/upload"><p class="text-sm text-blue-600 hover:text-blue-800">{{ $t("Share your first adventure here") }}</p></a>
+                </div>
+                <div v-else-if="!user?.username">
+                    <img alt="" src="/alien.svg" width="200" height="200" />
+                    <p class="pt-8 text-xl font-medium">{{ $t("The aliens have taken him away!") }}</p>
+                </div>
+                <div v-else>
+                    <img alt="" src="/post.svg" width="200" height="200" />
+                    <p class="pt-8 text-xl font-medium">{{ $t("No publication for the moment") }}</p>
+                </div>
+            </div>
+        </div>
 </template>
 
 <script setup>
-    const { data: gv_user } = await useLazyFetch(`http://localhost:8888/users/${useRoute().params.id}`, { mode: "no-cors" });
+    const { data: gv_user } = await useLazyFetch(`http://localhost:8888/users/${useRoute().params.id}`, {});
 </script>
 
 <script>
@@ -56,22 +73,37 @@
         async created() {
             if(useCookie("token")?.value) this.vanity = JSON.parse(atob(useCookie("token").value.split(".")[1])).sub;
 
-            const { data } = await useFetch(`http://173.212.247.156/users/${useRoute().params.id}`, { mode: "no-cors" });
+            const { data } = await useFetch(`https://oauth.gravitalia.com/users/${useRoute().params.id}`, {});
             this.user = data;
 
-            useHead({
-                meta: [
-                    {
-                        name: "description",
-                        content: `Access to the ${this.user.username}'s photos and much more!`
-                    },
-                    {
-                        property: "og:description",
-                        content: `Access to the ${this.user.username}'s photos and much more!`
-                    }
-                ],
-                title: `${this.user.username} (@${this.user.vanity}) / Gravitalia`
-            });
+            if(this.user?.username) {
+                useHead({
+                    meta: [
+                        {
+                            name: "description",
+                            content: `Access to the ${this.user.username}'s photos and much more!`
+                        },
+                        {
+                            property: "og:description",
+                            content: `Access to the ${this.user.username}'s photos and much more!`
+                        }
+                    ],
+                    title: `${this.user?.username} (@${this.user.vanity}) / Gravitalia`
+                });
+            } else {
+                useHead({
+                    meta: [
+                        {
+                            name: "description",
+                            content: `Discover more accounts, new photos and more!`
+                        },
+                        {
+                            property: "og:description",
+                            content: `Discover more accounts, new photos and more!`
+                        }
+                    ]
+                });
+            }
         }
     }
 </script>

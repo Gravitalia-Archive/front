@@ -1,4 +1,9 @@
 <template>
-    <Navbar />
-    <p>Soon</p>
+    <div>
+        <Navbar />
+        <p>Soon</p>
+    </div>
 </template>
+
+<script>
+</script>
