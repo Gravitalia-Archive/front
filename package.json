@@ -1,18 +1,18 @@
 {
   "private": true,
   "scripts": {
-    "build": "nuxt build",
+    "build": "npx nuxt build",
     "dev": "nuxt dev",
-    "dev:wrangler": "NITRO_PRESET=cloudflare yarn build && wrangler dev",
+    "dev:wrangler": "npm run build && wrangler dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "deploy": "NITRO_PRESET=cloudflare yarn build && wrangler publish"
+    "deploy": "npm run build && wrangler publish"
   },
   "devDependencies": {
     "@nuxtjs/color-mode": "^3.2.0",
-    "@nuxtjs/i18n": "^8.0.0-beta.11",
+    "@nuxtjs/i18n": "^8.0.0-beta.10",
     "@nuxtjs/tailwindcss": "^6.6.6",
-    "nuxt": "^3.4.1"
+    "nuxt": "^3.4.2"
   }
 }
