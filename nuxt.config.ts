@@ -10,7 +10,9 @@ export default defineNuxtConfig({
             title: "Gravitalia",
             meta: [
                 { name: "description", content: "Connecting the world, allowing freedom is what Gravitalia does. Let us connect you!" },
+                { name: "og:description", content: "Connecting the world, allowing freedom is what Gravitalia does. Let us connect you!" },
                 { property: "og:type", content: "website" },
+                { property: "og:site_name", content: "Gravitalia" },
                 { property: "og:title", content: "Gravitalia" },
                 { property: "og:image", content: "/favicon.webp" },
                 { name: "theme-color", content: "#332b43" },
@@ -31,13 +33,13 @@ export default defineNuxtConfig({
         "@nuxtjs/tailwindcss",
         ["@nuxtjs/i18n", {
             defaultLocale: "en",
-            lazy: false,
+            lazy: true,
             langDir: "lang",
-            strategy: "no_prefix",
             detectBrowserLanguage: {
                 useCookie: true,
                 cookieKey: "lang",
                 redirectOn: "root",
+                strategy: "no_prefix",
                 fallbackLocale: "en",
                 alwaysRedirect: true
             },
@@ -71,5 +73,8 @@ export default defineNuxtConfig({
 
     experimental: {
         noScripts: false // Soon true, I hope
+    },
+    nitro: {
+        preset: 'cloudflare'
     }
 });
