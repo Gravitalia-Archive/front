@@ -49,7 +49,7 @@
                                     <hr />
                                     <NuxtLink :to="'/'+user.vanity" prefetch class="block px-4 py-2 text-sm text-gray-700 dark:text-white">{{ $t("Profile") }}</NuxtLink>
                                     <a href="settings" class="block px-4 py-2 text-sm text-gray-700 dark:text-white">{{ $t("Parameters") }}</a>
-                                    <NuxtLink to="/new" prefetch class="block px-4 py-2 text-sm text-gray-700 dark:text-white">{{ $t("New post") }}</NuxtLink>
+                                    <NuxtLink to="/upload" prefetch class="block px-4 py-2 text-sm text-gray-700 dark:text-white">{{ $t("New post") }}</NuxtLink>
                                     <span class="block px-4 py-2 text-sm text-gray-700 dark:text-white cursor-pointer"><span onclick="document.cookie = 'token=gv;expires=Thu, 01 Jan 1970 00:00:01 GMT;',window.location.reload();">{{ $t("Logout") }}</span></span>
                                 </div>
                             </div>
