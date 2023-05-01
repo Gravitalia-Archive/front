@@ -45,12 +45,12 @@
                                     <svg class="absolute bottom-full right-4" width="22" height="13" viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg">
                                         <polygon class="fill-slate-100 dark:fill-slate-900" points="15, 0 30, 20 0, 20"/>
                                     </svg>
-                                    <p class="block px-4 py-2 text-sm text-gray-800 dark:text-gray-100">Signed in as<br /><strong>{{ user.username }}</strong></p>
+                                    <p class="block px-4 py-2 text-sm text-gray-800 dark:text-gray-100">{{ $t("Signed in as") }}<br /><strong>{{ user.username }}</strong></p>
                                     <hr />
-                                    <NuxtLink :to="'/'+user.vanity" prefetch class="block px-4 py-2 text-sm text-gray-700 dark:text-white">Profile</NuxtLink>
-                                    <a href="settings" class="block px-4 py-2 text-sm text-gray-700 dark:text-white">Settings</a>
-                                    <NuxtLink to="/new" prefetch class="block px-4 py-2 text-sm text-gray-700 dark:text-white">New post</NuxtLink>
-                                    <span class="block px-4 py-2 text-sm text-gray-700 dark:text-white cursor-pointer"><span onclick="document.cookie = 'session=gv;expires=Thu, 01 Jan 1970 00:00:01 GMT;',localStorage.removeItem('user_id'),window.location.reload();">Logout</span></span>
+                                    <NuxtLink :to="'/'+user.vanity" prefetch class="block px-4 py-2 text-sm text-gray-700 dark:text-white">{{ $t("Profile") }}</NuxtLink>
+                                    <a href="settings" class="block px-4 py-2 text-sm text-gray-700 dark:text-white">{{ $t("Parameters") }}</a>
+                                    <NuxtLink to="/new" prefetch class="block px-4 py-2 text-sm text-gray-700 dark:text-white">{{ $t("New post") }}</NuxtLink>
+                                    <span class="block px-4 py-2 text-sm text-gray-700 dark:text-white cursor-pointer"><span onclick="document.cookie = 'token=gv;expires=Thu, 01 Jan 1970 00:00:01 GMT;',window.location.reload();">{{ $t("Logout") }}</span></span>
                                 </div>
                             </div>
                         </div>
@@ -75,7 +75,7 @@
         async created() {
             const token = useCookie("token");
             if (token.value) {
-                const { data } = await useFetch(`http://localhost:1111/users/${JSON.parse(atob(token.value.split(".")[1])).sub}`, {});
+                const { data } = await useFetch(`https://oauth.gravitalia.com/users/${JSON.parse(atob(token.value.split(".")[1])).sub}`, {});
                 this.user = data;
             }
 
