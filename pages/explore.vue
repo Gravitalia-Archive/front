@@ -6,4 +6,7 @@
 </template>
 
 <script>
+    useHead({
+        title: "Gravitalia"
+    });
 </script>
