@@ -70,7 +70,7 @@
                     <h2 id="like" class="fadeIn hidden text-6xl md:text-8xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-sky-500 to-blue-600">{{ $t("Like.") }}</h2>
                     <br /><br /><br />
                     <div class="flex justify-center items-align-center">
-                        <a href="https://account-1hw.pages.dev/signup" class="rounded px-6 py-2 m-1 border-b-4 border-l-2 shadow-lg bg-blue-700 border-blue-800 text-white">
+                        <a href="https://account.gravitalia.com/signup" class="rounded px-6 py-2 m-1 border-b-4 border-l-2 shadow-lg bg-blue-700 border-blue-800 text-white">
                             {{ $t("Sign up") }}
                         </a>
                         <div class="pl-7"></div>
