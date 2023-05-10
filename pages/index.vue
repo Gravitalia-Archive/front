@@ -165,6 +165,16 @@
                 script: [
                     { children: `const idList=["take","publish","share","like"];let currentIdIndex=0;setInterval(()=>{document.getElementById(idList[currentIdIndex])?.classList?.add("hidden"),currentIdIndex=(currentIdIndex+1)%idList.length,document.getElementById(idList[currentIdIndex])?.classList?.remove("hidden")},2580);` }
                 ],
+                meta: [
+                    {
+                        name: "description",
+                        content: "Connecting the world, allowing freedom is what Gravitalia does. Let us connect you!"
+                    },
+                    {
+                        property: "og:description",
+                        content: "Connecting the world, allowing freedom is what Gravitalia does. Let us connect you!"
+                    }
+                ],
                 title: "Gravitalia"
             });
         },
