@@ -9,8 +9,6 @@ export default defineNuxtConfig({
             viewport: "width=device-width,initial-scale=1",
             title: "Gravitalia",
             meta: [
-                { name: "description", content: "Connecting the world, allowing freedom is what Gravitalia does. Let us connect you!" },
-                { name: "og:description", content: "Connecting the world, allowing freedom is what Gravitalia does. Let us connect you!" },
                 { property: "og:type", content: "website" },
                 { property: "og:site_name", content: "Gravitalia" },
                 { property: "og:title", content: "Gravitalia" },
@@ -33,13 +31,13 @@ export default defineNuxtConfig({
         "@nuxtjs/tailwindcss",
         ["@nuxtjs/i18n", {
             defaultLocale: "en",
+            strategy: "no_prefix",
             lazy: true,
             langDir: "lang",
             detectBrowserLanguage: {
                 useCookie: true,
                 cookieKey: "lang",
                 redirectOn: "root",
-                strategy: "no_prefix",
                 fallbackLocale: "en",
                 alwaysRedirect: true
             },
@@ -69,7 +67,7 @@ export default defineNuxtConfig({
             classSuffix: '',
             storageKey: 'mode'
           }]
-    ], 
+    ],
 
     experimental: {
         noScripts: false // Soon true, I hope
