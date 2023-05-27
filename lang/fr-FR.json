@@ -40,5 +40,22 @@
     "follower": "abonné",
     "subscriptions": "abonnements",
     "subscription": "abonnement",
-    "You are the first one here! And there is nothing...": "Vous êtes le premier ici ! Et il n'y a rien..."
+    "You are the first one here! And there is nothing...": "Vous êtes le premier ici ! Et il n'y a rien...",
+    "Report": "Signaler",
+    "Global block": "Bloquer globalement",
+    "Platform block": "Bloquer sur la pateforme",
+    "Why are you reporting?": "Pourquoi signalez-vous ?",
+    "Cancel": "Annuler",
+    "Violence, abuse or criminal content": "Violence, abus ou contenu criminel",
+    "Hate and harassement": "Haine et harcèlement",
+    "Suicide or self-harm": "Suicide ou automutilation",
+    "Nudity content": "Nudité",
+    "Misinformation": "Désinformation",
+    "Dangerous content or challenge": "Contenu ou défi dangereux",
+    "Personal data leak": "Fuite de données personnelles",
+    "Copyright/intellectual property violation": "Violation des droits d'auteur",
+    "Other": "Autre",
+    "Success!": "Succès !",
+    "Your feedback helps us to improve Gravitalia.": "Votre signalement nous aide à améliorer Gravitalia.",
+    "OK": "OK"
 }
