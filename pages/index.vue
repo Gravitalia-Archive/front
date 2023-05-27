@@ -162,9 +162,6 @@
         
         async created() {
             useHead({
-                script: [
-                    { children: `const idList=["take","publish","share","like"];let currentIdIndex=0;setInterval(()=>{document.getElementById(idList[currentIdIndex])?.classList?.add("hidden"),currentIdIndex=(currentIdIndex+1)%idList.length,document.getElementById(idList[currentIdIndex])?.classList?.remove("hidden")},2580);` }
-                ],
                 meta: [
                     {
                         name: "description",
@@ -196,6 +193,16 @@
                     token.value = null;
                     await navigateTo("/callback");
                 }
+            }
+
+            if(!this.user) {
+                const idList = ["take", "publish", "share", "like"];
+                let currentIdIndex = 0;
+                setInterval(() => {
+                    document.getElementById(idList[currentIdIndex]).classList.add("hidden")
+                    currentIdIndex = (currentIdIndex + 1) % idList.length;
+                    document.getElementById(idList[currentIdIndex]).classList.remove("hidden");
+                }, 2580);
             }
         },
 
