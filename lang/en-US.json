@@ -40,5 +40,22 @@
     "follower": "follower",
     "subscriptions": "subscriptions",
     "subscription": "subscription",
-    "You are the first one here! And there is nothing...": "You are the first one here! And there is nothing..."
+    "You are the first one here! And there is nothing...": "You are the first one here! And there is nothing...",
+    "Report": "Report",
+    "Global block": "Global block",
+    "Platform block": "Platform block",
+    "Why are you reporting?": "Why are you reporting?",
+    "Cancel": "Cancel",
+    "Violence, abuse or criminal content": "Violence, abuse or criminal content",
+    "Hate and harassement": "Hate and harassement",
+    "Suicide or self-harm": "Suicide or self-harm",
+    "Nudity content": "Nudity content",
+    "Misinformation": "Misinformation",
+    "Dangerous content or challenge": "Dangerous content or challenge",
+    "Personal data leak": "Personal data leak",
+    "Copyright/intellectual property violation": "Copyright/intellectual property violation",
+    "Other": "Other",
+    "Success!": "Success!",
+    "Your feedback helps us to improve Gravitalia.": "Your feedback helps us to improve Gravitalia.",
+    "OK": "OK"
 }
