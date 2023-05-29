@@ -156,10 +156,12 @@ if(user._value?.username) {
 
             callback(data) {
                 this.me = data;
-                this.vanity = data._value.vanity;
+                this.vanity = data?._value?.vanity || "";
             },
 
             relation(type) {
+                if(!useCookie("token").value) return window.location.href = "https://api.gravitalia.com/callback";
+
                 fetch(`https://api.gravitalia.com/relation/${type}`, {
                     method: "POST",
                     headers: {
