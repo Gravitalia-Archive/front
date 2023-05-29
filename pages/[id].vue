@@ -1,29 +1,29 @@
 <template>
     <Navbar @userData="callback" />
-    <div v-if="!pending">
+    <div>
         <div class="flex justify-center">
         <div class="flex h-fit gap-10 px-2 md:w-[22%]">
-            <img class="rounded-full w-32 h-32" :src="user?.avatar ? `https://cdn.gravitalia.com/${user.avatar}` : `/avatar/${user?.username[0]?.toUpperCase()||'U'}.webp`" draggable="false" alt="" />
+            <img class="rounded-full w-32 h-32" :src="user?.avatar && exists ? `https://cdn.gravitalia.com/${user.avatar}` : `/avatar/${exists ? user?.username[0]?.toUpperCase()||'U' : 'U'}.webp`" draggable="false" alt="" />
 
             <div class="grid gap-3 w-full">
                 <div>
                     <div class="flex">
-                        <h1 class="text-xl font-light">{{ user?.username || "Unknown account" }}</h1>
-                        <span class="pl-4"></span><button v-if="user && user?.vanity !== vanity" class="w-46 bg-blue-500 dark:bg-blue-600 p-1.5 text-white text-xs rounded-md font-semibold">{{ $t("Subscribe") }}</button>
-                        <button v-else-if="user" class="w-46 bg-gray-200 dark:bg-gray-400 p-1.5 text-dark text-xs rounded-md font-semibold">{{ $t("Parameters") }}</button>
-                        <div v-if="user && me && vanity !== user?.vanity" class="flex">
+                        <h1 class="text-xl font-light">{{ exists ? user?.username || "Unknown account" : "Unknown account" }}</h1>
+                        <span class="pl-4"></span><button v-if="user && user?.vanity !== vanity && exists" id="subscribe" @click="relation('subscribe')" class="w-46 text-white bg-blue-500 dark:bg-blue-600 p-1.5 text-xs rounded-md font-semibold">{{ $t("Subscribe") }}</button>
+                        <button v-else-if="user && exists" class="w-46 bg-gray-200 dark:bg-gray-400 p-1.5 text-dark text-xs rounded-md font-semibold">{{ $t("Parameters") }}</button>
+                        <div v-if="user && me && vanity !== user?.vanity && exists" class="flex">
                             <button type="button" aria-label="Action menu" class="z-50 pl-4" @click="showMenu()">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7 cursor-pointer">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
                                 </svg>
                             </button>
                             <div class="pt-8 pl-14 absolute">
-                                <div id="show-menu" class="hidden z-10 origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-slate-100 dark:bg-zinc-800 dark:border dark:border-zinc-700 ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical">
+                                <div id="show-menu" class="hidden z-10 origin-top-right absolute right-0 mt-2 w-52 rounded-md shadow-lg py-1 bg-slate-100 dark:bg-zinc-800 dark:border dark:border-zinc-700 ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical">
                                     <svg class="absolute bottom-full right-4" width="22" height="13" viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg">
                                         <polygon class="fill-slate-100 dark:fill-zinc-800 dark:stroke-zinc-700" points="15, 0 30, 20 0, 20"/>
                                     </svg>
                                     <!-- <div class="w-full cursor-pointer"><span class="block px-4 py-2 text-sm font-semibold text-red-600 dark:text-white">{{ $t("Global block") }}</span></div> -->
-                                    <div class="w-full cursor-pointer"><span class="block px-4 py-2 text-sm font-semibold text-red-600 dark:text-white">{{ $t("Platform block") }}</span></div>
+                                    <div class="w-full cursor-pointer" @click="relation('block')"><span id="block" class="block px-4 py-2 text-sm font-semibold text-red-600 dark:text-white">{{ $t("Platform block") }}</span></div>
                                     <div class="w-full cursor-pointer" @click="showModal()"><span class="block px-4 py-2 text-sm text-gray-700 dark:text-white">{{ $t("Report") }}</span></div>
                                 </div>
                             </div>
@@ -35,7 +35,7 @@
                     <p><b>{{ gv_user?.following||0 }}</b> {{ gv_user?.following||0 > 1 ? $t("subscriptions") : $t("subscription") }}</p>
                     </div>
                 </div>
-                <p><b class="pb-6">{{ user?.vanity  }}</b><br />{{ user?.bio }}</p>
+                <p><b class="pb-6">{{ exists ? user?.vanity : ""  }}</b><br />{{ exists ? user?.bio : "" }}</p>
             </div>
         </div>
             </div>
@@ -57,12 +57,12 @@
             </div>
             <div v-if="(gv_user?.posts||[]).length === 0">
             <div class="flex flex-col items-center justify-center">
-                <div v-if="user?.vanity === vanity">
+                <div v-if="user?.vanity === vanity && exists">
                     <img alt="" src="/post.svg" width="200" height="200" />
                     <p class="pt-8 text-xl font-medium">{{ $t("On your marks, get set, shoot!") }}</p>
                     <a href="/upload"><p class="text-sm text-blue-600 hover:text-blue-800">{{ $t("Share your first adventure here") }}</p></a>
                 </div>
-                <div v-else-if="!user?.username">
+                <div v-else-if="!user?.username || !exists">
                     <img alt="" src="/alien.svg" width="200" height="200" />
                     <p class="pt-8 text-xl font-medium">{{ $t("The aliens have taken him away!") }}</p>
                 </div>
@@ -77,62 +77,64 @@
     <SignalChoice />
 </template>
 
+<script setup>
+const { data: user } = await useFetch(`https://oauth.gravitalia.com/users/${useRoute().params.id}`, {
+    headers: {
+        "Authorization": useCookie("token").value
+    }
+});
+
+if(user._value?.username) {
+    useHeadSafe({
+        meta: [
+            {
+                name: "description",
+                content: `Access to the ${user._value.username}'s photos and much more!`
+            },
+            {
+                property: "og:description",
+                content: `Access to the ${user._value.username}'s photos and much more!`
+            }
+        ],
+        title: `${user._value.username} (@${user._value.vanity}) / Gravitalia`
+    });
+} else {
+    useHeadSafe({
+        meta: [
+            {
+                name: "description",
+                content: `Discover more accounts, new photos and more!`
+            },
+            {
+                property: "og:description",
+                content: `Discover more accounts, new photos and more!`
+            }
+        ]
+    });
+}
+</script>
+
 <script>
     export default {
         data() {
             return {
-                user: null,
+                exists: true,
                 vanity: "",
                 me: null,
-                pending: false,
                 gv_user: null
             }
         },
 
-
-        
-        async created() {
-            if(useCookie("token")?.value) this.vanity = JSON.parse(atob(useCookie("token").value.split(".")[1])).sub;
-
-            const { data } = await useFetch(`https://oauth.gravitalia.com/users/${useRoute().params.id}`, {});
-            this.user = data;
-
-            if(this.user?.username) {
-                useHeadSafe({
-                    meta: [
-                        {
-                            name: "description",
-                            content: `Access to the ${this.user.username}'s photos and much more!`
-                        },
-                        {
-                            property: "og:description",
-                            content: `Access to the ${this.user.username}'s photos and much more!`
-                        }
-                    ],
-                    title: `${this.user?.username} (@${this.user.vanity}) / Gravitalia`
-                });
-            } else {
-                useHeadSafe({
-                    meta: [
-                        {
-                            name: "description",
-                            content: `Discover more accounts, new photos and more!`
-                        },
-                        {
-                            property: "og:description",
-                            content: `Discover more accounts, new photos and more!`
-                        }
-                    ]
-                });
-            }
-        },
-
         mounted() {
-            fetch(`https://api.gravitalia.com/users/${useRoute().params.id}`, {})
+            fetch(`https://api.gravitalia.com/users/${useRoute().params.id}`, {
+                headers: {
+                    "Authorization": useCookie("token").value
+                }
+            })
             .then(res => res.json())
             .then(res => {
                 if(res?.message === "Invalid user") {
-                    this.user = null;
+                    this.exists = false;
                 } else {
                     this.gv_user = res;
                 }
@@ -154,6 +156,40 @@
 
             callback(data) {
                 this.me = data;
+                this.vanity = data._value.vanity;
+            },
+
+            relation(type) {
+                fetch(`https://api.gravitalia.com/relation/${type}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": useCookie("token").value
+                    },
+                    body: JSON.stringify({
+                        id: useRoute().params.id
+                    })
+                })
+                .then(res => res.json())
+                .then(res => {
+                    if(res.message === "OK: Create relation") {
+                        if(type === "block") {
+                            document.getElementById(type).innerText = this.$t("Platform unblock");
+                        } else {
+                            document.getElementById(type).classList.add("bg-gray-200", "dark:bg-gray-400", "text-dark");
+                            document.getElementById(type).classList.remove("bg-blue-500", "dark:bg-blue-600", "text-white");
+                            document.getElementById(type).innerText = this.$t("Unsubscribe");
+                        }
+                    } else {
+                        if(type === "block") {
+                            document.getElementById(type).innerText = this.$t("Platform block");
+                        } else {
+                            document.getElementById(type).classList.remove("bg-gray-200", "dark:bg-gray-400", "text-dark");
+                            document.getElementById(type).classList.add("bg-blue-500", "dark:bg-blue-600", "text-white");
+                            document.getElementById(type).innerText = this.$t("Subscribe");
+                        }
+                    }
+                });
             }
         }
     }
