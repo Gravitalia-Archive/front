@@ -2,13 +2,10 @@
     <div class="bg-gray-200 dark:bg-zinc-800">
         <div class="w-full text-gray-700 dark:text-white">
             <div class="flex flex-col max-w-screen-xl mx-auto md:items-center md:justify-between md:flex-row px-4 md:px-6 lg:px-8">
-                <div class="flex flex-row items-center justify-between">
+                <div class="flex flex-row items-center justify-between h-11">
                     <img alt="Gravitalia logo" width="30" height="30" src="/favicon.webp" draggable="false" />
-                    <div class="block md:hidden">
-                        <a href="https://api.gravitalia.com/callback" class="cursor-pointer py-2 px-4 font-semibold rounded-lg shadow-md text-white bg-[#332b43] dark:bg-indigo-600">{{ $t("Sign in") }}</a>
-                    </div>
                     <div class="hidden md:block"><span class="ml-8"></span></div>
-                    <button aria-label="Open menu" class="rounded-lg md:hidden focus:outline-none focus:shadow-outline">
+                    <button aria-label="Open menu" @click="openMobile()" class="rounded-lg md:hidden focus:outline-none focus:shadow-outline">
                         <svg fill="currentColor" viewBox="0 0 20 20" class="w-6 h-6">
                             <path id="open-mobile-menu" fillRule="evenodd" d="M1 2.75A.75.75 0 011.75 2h12.5a.75.75 0 110 1.5H1.75A.75.75 0 011 2.75zm0 5A.75.75 0 011.75 7h12.5a.75.75 0 110 1.5H1.75A.75.75 0 011 7.75zM1.75 12a.75.75 0 100 1.5h12.5a.75.75 0 100-1.5H1.75z" />
                             <path id="close-mobile-menu" class="hidden" fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
@@ -28,34 +25,33 @@
                         </button>
                     </div>
                 </nav>
-                <nav id="mobile-menu" class="hidden md:hidden flex-col flex-grow pb-4">
-                    <br />
-                    <a href="/">{{ $t("Home") }}</a>
-                    <a href="/explore">{{ $t("Explore") }}</a>
+                <nav id="mobile-menu" class="hidden md:hidden">
+                    <span class="w-full flex justify-center text-center"><NuxtLink :class="path === '/' ? 'py-1 w-3/4 mb-2 bg-[#24292e] dark:bg-gray-700 text-white rounded' : 'py-1 w-3/4 bg-gray-300 dark:bg-gray-200 dark:text-black hover:bg-gray-400 rounded mb-2'" to="/" prefetch>{{ $t("Home") }}</NuxtLink></span>
+                    <span class="w-full flex justify-center text-center"><NuxtLink :class="path === '/explore' ? 'py-1 w-3/4 mb-2 bg-[#24292e] dark:bg-gray-700 text-white rounded' : 'py-1 w-3/4 bg-gray-300 dark:bg-gray-200 dark:text-black hover:bg-gray-400 rounded mb-2'" to="/explore" prefetch>{{ $t("Explore") }}</NuxtLink></span>
                 </nav>
-                <div class="flex-left hidden md:block">
+                <div class="absolute pl-32 md:pl-0 md:static md:flex-left flex flex-row items-center justify-between h-11">
                     <div v-if="user">
                         <div class="relative ml-3">
-                            <button aria-label="User menu" class="flex rounded-full text-sm focus:outline-none" onclick="document.getElementById('show-profile').classList.value.includes('hidden')?document.getElementById('show-profile').classList.remove('hidden'):document.getElementById('show-profile').classList.add('hidden')">
+                            <button type="button" aria-label="User menu" class="flex rounded-full text-sm focus:outline-none" @click="showProfile()">
                                 <img class="h-8 w-8 rounded-full" :src='user.avatar ? "CDN_URL" : "/avatar/"+(user.username.match("[A-z]") ? user.username.match("[A-z]")[0].toUpperCase() : "A")+".webp"' alt="">
                             </button>
 
-                            <div class="pt-1">
-                                <div id="show-profile" class="hidden z-50 origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-slate-100 dark:bg-slate-900 ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical">
+                            <div class="pt-1.5 pl-10">
+                                <div id="show-profile" class="hidden z-50 origin-top-right absolute right-0 mt-3 w-48 rounded-md shadow-lg py-1 bg-slate-100 dark:bg-zinc-800 dark:border dark:border-zinc-700 ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical">
                                     <svg class="absolute bottom-full right-4" width="22" height="13" viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg">
-                                        <polygon class="fill-slate-100 dark:fill-slate-900" points="15, 0 30, 20 0, 20"/>
+                                        <polygon class="fill-slate-100 dark:fill-zinc-800 dark:stroke-zinc-700" points="15, 0 30, 20 0, 20"/>
                                     </svg>
                                     <p class="block px-4 py-2 text-sm text-gray-800 dark:text-gray-100">{{ $t("Signed in as") }}<br /><strong>{{ user.username }}</strong></p>
                                     <hr />
                                     <NuxtLink :to="'/'+user.vanity" prefetch class="block px-4 py-2 text-sm text-gray-700 dark:text-white">{{ $t("Profile") }}</NuxtLink>
-                                    <a href="settings" class="block px-4 py-2 text-sm text-gray-700 dark:text-white">{{ $t("Parameters") }}</a>
+                                    <NuxtLink to="/settings" prefetch class="block px-4 py-2 text-sm text-gray-700 dark:text-white">{{ $t("Parameters") }}</NuxtLink>
                                     <NuxtLink to="/upload" prefetch class="block px-4 py-2 text-sm text-gray-700 dark:text-white">{{ $t("New post") }}</NuxtLink>
-                                    <span class="block px-4 py-2 text-sm text-gray-700 dark:text-white cursor-pointer"><span onclick="document.cookie = 'token=gv;expires=Thu, 01 Jan 1970 00:00:01 GMT;',window.location.reload();">{{ $t("Logout") }}</span></span>
+                                    <span class="block px-4 py-2 text-sm text-gray-700 dark:text-white cursor-pointer"><span @click="logout()">{{ $t("Logout") }}</span></span>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <a v-else href="https://api.gravitalia.com/callback" class="cursor-pointer py-2 px-4 font-semibold rounded-lg shadow-md text-white bg-[#332b43] dark:bg-indigo-600">{{ $t("Sign in") }} {{ user }}</a>
+                    <a v-else href="https://api.gravitalia.com/callback" class="cursor-pointer py-2 px-4 font-semibold rounded-lg shadow-md text-white bg-[#332b43] dark:bg-indigo-600">{{ $t("Sign in") }}</a>
                 </div>
             </div>
         </div>
@@ -63,26 +59,39 @@
     <br /><br />
 </template>
 
-<script>
-    export default {
-        data() {
-            return {
-                user: null,
-                path: "/"
-            }
-        },
-        
-        async created() {
-            const token = useCookie("token");
-            if (token.value) {
-                const { data } = await useFetch(`https://oauth.gravitalia.com/users/${JSON.parse(atob(token.value.split(".")[1])).sub}`, {});
-                this.user = data;
-            }
+<script setup>
+const token = useCookie("token");
+const { data: user } = token.value ? await useFetch(`https://oauth.gravitalia.com/users/${JSON.parse(atob(token.value.split(".")[1])).sub}`, {}) : {data: null};
 
-            this.path = useRoute().path;
-            this.$emit("userData", this.user);
-        }
+const path = useRoute().path;
+
+const emit = defineEmits(["userData"]);
+emit("userData", user);
+
+function showProfile() {
+    if(document.getElementById('show-profile').classList.value.includes('hidden')) {
+        document.getElementById('show-profile').classList.remove('hidden');
+    } else {
+        document.getElementById('show-profile').classList.add('hidden');
     }
+}
+
+function logout() {
+    document.cookie = "token=gv;expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+    window.location.reload();
+}
+
+function openMobile() {
+    if(document.getElementById("mobile-menu").classList.contains("hidden")) {
+        document.getElementById("mobile-menu").classList.remove("hidden");
+        document.getElementById("open-mobile-menu").classList.add("hidden");
+        document.getElementById("close-mobile-menu").classList.remove("hidden");
+    } else {
+        document.getElementById("mobile-menu").classList.add("hidden");
+        document.getElementById("open-mobile-menu").classList.remove("hidden");
+        document.getElementById("close-mobile-menu").classList.add("hidden");
+    }
+}
 </script>
 
 <style>
@@ -117,10 +126,6 @@
         outline-offset: -1px;
     }
 
-    /* clears the ‘X’ from Internet Explorer */
-    input[type=search]::-ms-clear { display: none; width : 0; height: 0; }
-    input[type=search]::-ms-reveal { display: none; width : 0; height: 0; }
-    /* clears the ‘X’ from Chrome */
     input[type="search"]::-webkit-search-decoration,
     input[type="search"]::-webkit-search-cancel-button,
     input[type="search"]::-webkit-search-results-button,
