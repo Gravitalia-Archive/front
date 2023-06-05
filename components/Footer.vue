@@ -8,3 +8,5 @@
 		<a href="https://account.gravitalia.com/privacy" target="_blank" class="hover:underline underline-offset-1 cursor-pointer">{{ $t("Privacy") }}</a>
 	</div>
 </template>
+
+<script></script>
