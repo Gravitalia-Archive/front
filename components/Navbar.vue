@@ -31,9 +31,9 @@
                 </nav>
                 <div class="absolute pl-32 md:pl-0 md:static md:flex-left flex flex-row items-center justify-between h-11">
                     <div v-if="user">
-                        <div class="relative ml-3">
+                        <div class="relative ml-3 pt-2">
                             <button type="button" aria-label="User menu" class="flex rounded-full text-sm focus:outline-none" @click="showProfile()">
-                                <img class="h-8 w-8 rounded-full" :src='user.avatar ? "CDN_URL" : "/avatar/"+(user.username.match("[A-z]") ? user.username.match("[A-z]")[0].toUpperCase() : "A")+".webp"' alt="">
+                                <img class="h-8 w-8 rounded-full" :src='user.avatar ? runtimeConfig.CDN_URL+"/t_profile/"+user.avatar+".webp"  : "/avatar/"+(user.username.match("[A-z]") ? user.username.match("[A-z]")[0].toUpperCase() : "A")+".webp"' alt="">
                             </button>
 
                             <div class="pt-1.5 pl-10">
@@ -51,7 +51,7 @@
                             </div>
                         </div>
                     </div>
-                    <a v-else href="https://api.gravitalia.com/callback" class="cursor-pointer py-2 px-4 font-semibold rounded-lg shadow-md text-white bg-[#332b43] dark:bg-indigo-600">{{ $t("Sign in") }}</a>
+                    <a v-else :href="(runtimeConfig?.API_URL || 'https://api.gravitalia.com')+'/callback'" class="cursor-pointer py-2 px-4 font-semibold rounded-lg shadow-md text-white bg-[#332b43] dark:bg-indigo-600">{{ $t("Sign in") }}</a>
                 </div>
             </div>
         </div>
@@ -60,8 +60,13 @@
 </template>
 
 <script setup>
+const runtimeConfig = useRuntimeConfig().public;
 const token = useCookie("token");
-const { data: user } = token.value ? await useFetch(`https://oauth.gravitalia.com/users/${JSON.parse(atob(token.value.split(".")[1])).sub}`, {}) : {data: null};
+const { data: user } = token.value ? await useFetch(`${runtimeConfig?.ACCOUNT_API_URL || "https://oauth.gravitalia.com"}/users/@me`, {
+    headers: {
+        "Authorization": useCookie("token").value
+    }
+}) : {data: null};
 
 const path = useRoute().path;
 
