@@ -3,7 +3,7 @@ export default defineNuxtConfig({
     app: {
         head: {
             htmlAttrs: {
-                lang: "fr"
+                lang: "en"
             },
             charset: "utf-8",
             viewport: "width=device-width,initial-scale=1",
@@ -68,6 +68,14 @@ export default defineNuxtConfig({
             storageKey: 'mode'
           }]
     ],
+
+    runtimeConfig: {
+        public: {
+            ACCOUNT_API_URL: "https://oauth.gravitalia.com",
+            API_URL: "https://api.gravitalia.com",
+            CDN_URL: "https://res.cloudinary.com/dimtq5hwr/image/upload/s--4SMIfypA--"
+        }
+    },
 
     experimental: {
         noScripts: false // Soon true, I hope
