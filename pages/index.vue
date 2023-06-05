@@ -74,7 +74,7 @@
                             {{ $t("Sign up") }}
                         </a>
                         <div class="pl-7"></div>
-                        <a href="https://api.gravitalia.com/callback" class="rounded px-4 py-2 m-1 border border-gray-200 dark:border-gray-800 hover:border-gray-200">
+                        <a :href="(runtimeConfig?.API_URL || 'https://api.gravitalia.com')+'/callback'" class="rounded px-4 py-2 m-1 border border-gray-200 dark:border-gray-800 hover:border-gray-200">
                             {{ $t("Sign in") }}
                         </a>
                     </div>
@@ -120,7 +120,7 @@
                 </div>
                 <br />
                 <div class="flex justify-center">
-                    <a href="https://api.gravitalia.com/callback" class="rounded px-4 py-2 m-1 border border-gray-200 dark:border-gray-800 hover:border-gray-200">
+                    <a :href="(runtimeConfig?.API_URL || 'https://api.gravitalia.com')+'/callback'" class="rounded px-4 py-2 m-1 border border-gray-200 dark:border-gray-800 hover:border-gray-200">
                         {{ $t("Sign in") }}
                     </a>
                 </div>
@@ -156,7 +156,8 @@
         data() {
             return {
                 user: null,
-                recommendation: []
+                recommendation: [],
+                runtimeConfig: null
             }
         },
         
@@ -177,11 +178,12 @@
         },
 
         async mounted() {
-            const token = useCookie("token");
+            this.runtimeConfig = useRuntimeConfig().public;
 
+            const token = useCookie("token");
             if(token.value) {
                 setTimeout(async() => {
-                    this.recommendation = await fetch(`https://api.gravitalia.com/recommendation/for_you_feed`, {
+                    this.recommendation = await fetch(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/recommendation/for_you_feed`, {
                         headers: {
                             "Authorization": token.value
                         }

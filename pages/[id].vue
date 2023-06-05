@@ -3,7 +3,7 @@
     <div>
         <div class="flex justify-center">
         <div class="flex h-fit gap-10 px-2 md:w-[22%]">
-            <img class="rounded-full w-32 h-32" :src="user?.avatar && exists ? `https://cdn.gravitalia.com/${user.avatar}` : `/avatar/${exists ? user?.username[0]?.toUpperCase()||'U' : 'U'}.webp`" draggable="false" alt="" />
+            <img class="rounded-full w-32 h-32" :src="user?.avatar && exists ? runtimeConfig.CDN_URL+'/t_avatar/'+user.avatar+'.webp' : `/avatar/${exists ? user?.username[0]?.toUpperCase()||'U' : 'U'}.webp`" draggable="false" alt="" />
 
             <div class="grid gap-3 w-full">
                 <div>
@@ -78,7 +78,7 @@
 </template>
 
 <script setup>
-const { data: user } = await useFetch(`https://oauth.gravitalia.com/users/${useRoute().params.id}`, {
+const { data: user } = await useFetch(`${runtimeConfig?.ACCOUNT_API_URL || "https://oauth.gravitalia.com"}/users/${useRoute().params.id}`, {
     headers: {
         "Authorization": useCookie("token").value
     }
@@ -121,11 +121,14 @@ if(user._value?.username) {
                 exists: true,
                 vanity: "",
                 me: null,
-                gv_user: null
+                gv_user: null,
+                runtimeConfig: null
             }
         },
 
         mounted() {
+            this.runtimeConfig = useRuntimeConfig().public;
+
             fetch(`https://api.gravitalia.com/users/${useRoute().params.id}`, {
                 headers: {
                     "Authorization": useCookie("token").value
@@ -160,9 +163,9 @@ if(user._value?.username) {
             },
 
             relation(type) {
-                if(!useCookie("token").value) return window.location.href = "https://api.gravitalia.com/callback";
+                if(!useCookie("token").value) return window.location.href = (this.runtimeConfig?.API_URL || "https://api.gravitalia.com") + "/callback";
 
-                fetch(`https://api.gravitalia.com/relation/${type}`, {
+                fetch(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/relation/${type}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
