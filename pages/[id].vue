@@ -3,7 +3,7 @@
     <div>
         <div class="flex justify-center">
         <div class="flex h-fit gap-10 px-2 md:w-[22%]">
-            <img class="rounded-full w-32 h-32" :src="user?.avatar && exists ? runtimeConfig.CDN_URL+'/t_avatar/'+user.avatar+'.webp' : `/avatar/${exists ? user?.username[0]?.toUpperCase()||'U' : 'U'}.webp`" draggable="false" alt="" />
+            <img class="rounded-full w-32 h-32" :src="user?.avatar && exists ? runtimeConfig?.CDN_URL+'/t_avatar/'+user.avatar+'.webp' : `/avatar/${exists ? user?.username[0]?.toUpperCase()||'U' : 'U'}.webp`" draggable="false" alt="" />
 
             <div class="grid gap-3 w-full">
                 <div>
@@ -78,7 +78,7 @@
 </template>
 
 <script setup>
-const { data: user } = await useFetch(`${runtimeConfig?.ACCOUNT_API_URL || "https://oauth.gravitalia.com"}/users/${useRoute().params.id}`, {
+const { data: user } = await useFetch(`${useRuntimeConfig().public?.ACCOUNT_API_URL || "https://oauth.gravitalia.com"}/users/${useRoute().params.id}`, {
     headers: {
         "Authorization": useCookie("token").value
     }
@@ -122,13 +122,11 @@ if(user._value?.username) {
                 vanity: "",
                 me: null,
                 gv_user: null,
-                runtimeConfig: null
+                runtimeConfig: useRuntimeConfig().public
             }
         },
 
         mounted() {
-            this.runtimeConfig = useRuntimeConfig().public;
-
             fetch(`https://api.gravitalia.com/users/${useRoute().params.id}`, {
                 headers: {
                     "Authorization": useCookie("token").value
@@ -162,8 +160,8 @@ if(user._value?.username) {
                 this.vanity = data?._value?.vanity || "";
             },
 
-            relation(type) {
-                if(!useCookie("token").value) return window.location.href = (this.runtimeConfig?.API_URL || "https://api.gravitalia.com") + "/callback";
+            async relation(type) {
+                if(!useCookie("token").value) return await navigateTo(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/callback`, { external: true });
 
                 fetch(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/relation/${type}`, {
                     method: "POST",
@@ -177,7 +175,7 @@ if(user._value?.username) {
                 })
                 .then(res => res.json())
                 .then(res => {
-                    if(res.message === "OK: Create relation") {
+                    if(res.message === "Created relation") {
                         if(type === "block") {
                             document.getElementById(type).innerText = this.$t("Platform unblock");
                         } else {

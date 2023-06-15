@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-gray-200 dark:bg-zinc-800">
+    <div class="bg-gray-200 dark:bg-zinc-800 mb-10">
         <div class="w-full text-gray-700 dark:text-white">
             <div class="flex flex-col max-w-screen-xl mx-auto md:items-center md:justify-between md:flex-row px-4 md:px-6 lg:px-8">
                 <div class="flex flex-row items-center justify-between h-11">
@@ -33,7 +33,7 @@
                     <div v-if="user">
                         <div class="relative ml-3 pt-2">
                             <button type="button" aria-label="User menu" class="flex rounded-full text-sm focus:outline-none" @click="showProfile()">
-                                <img class="h-8 w-8 rounded-full" :src='user.avatar ? runtimeConfig.CDN_URL+"/t_profile/"+user.avatar+".webp"  : "/avatar/"+(user.username.match("[A-z]") ? user.username.match("[A-z]")[0].toUpperCase() : "A")+".webp"' alt="">
+                                <img class="w-8 h-8 rounded-full" :src='user.avatar ? runtimeConfig.CDN_URL+"/t_profile/"+user.avatar+".webp"  : "/avatar/"+(user.username.match("[A-z]") ? user.username.match("[A-z]")[0].toUpperCase() : "A")+".webp"' alt="">
                             </button>
 
                             <div class="pt-1.5 pl-10">
@@ -56,7 +56,6 @@
             </div>
         </div>
     </div>
-    <br /><br />
 </template>
 
 <script setup>
