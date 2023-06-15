@@ -157,11 +157,11 @@
             return {
                 user: null,
                 recommendation: [],
-                runtimeConfig: null
+                runtimeConfig: useRuntimeConfig().public
             }
         },
         
-        async created() {
+        created() {
             useHead({
                 meta: [
                     {
@@ -178,8 +178,6 @@
         },
 
         async mounted() {
-            this.runtimeConfig = useRuntimeConfig().public;
-
             const token = useCookie("token");
             if(token.value) {
                 setTimeout(async() => {

@@ -62,13 +62,11 @@
         data() {
             return {
                 user: null,
-                runtimeConfig: null
+                runtimeConfig: useRuntimeConfig().public
             }
         },
 
         async mounted() {
-            this.runtimeConfig = useRuntimeConfig().public;
-
             const token = useCookie("token");
             if(token.value) {
                 this.user = await fetch(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/users/@me`, {
