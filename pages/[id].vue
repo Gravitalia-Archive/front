@@ -43,7 +43,7 @@
             <div class="pt-4 flex justify-center">
                 <div class="w-1/2 grid grid-cols-3 space-x-7">
                     <div v-for="post in gv_user?.posts||[]">
-                        <a :href="'/'+user?.vanity+'/'+post.id" class="flex justify-start -space-x-[21.5rem]">
+                        <NuxtLink prefetch :to="'/'+user?.vanity+'/'+post.id" class="flex justify-start -space-x-[21.5rem]">
                             <img class="w-[21.5rem] h-[21.5rem] aspect-square" :onmouseenter="'document.getElementById('+post.id+').classList.remove(\'hidden\')'" :onmouseleave="'document.getElementById('+post.id+').classList.add(\'hidden\')'" draggable="false" :alt="post.text" src="/test.webp" />
                             <div :id="post.id" class="hidden bg-zinc-700/60 w-[21.5rem] h-[21.5rem] aspect-square inset-0 flex justify-center items-center text-white">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
@@ -51,7 +51,7 @@
                                 </svg>
                                 <p class="pl-2 text-white z-40 mix-blend-normal">{{ post.like }}</p>
                             </div>
-                        </a>
+                        </NuxtLink>
                     </div>
                 </div>
             </div>
@@ -60,7 +60,7 @@
                 <div v-if="user?.vanity === vanity && exists">
                     <img alt="" src="/post.svg" width="200" height="200" />
                     <p class="pt-8 text-xl font-medium">{{ $t("On your marks, get set, shoot!") }}</p>
-                    <a href="/upload"><p class="text-sm text-blue-600 hover:text-blue-800">{{ $t("Share your first adventure here") }}</p></a>
+                    <NuxtLink prefetch to="/upload"><p class="text-sm text-blue-600 hover:text-blue-800">{{ $t("Share your first adventure here") }}</p></NuxtLink>
                 </div>
                 <div v-else-if="!user?.username || !exists">
                     <img alt="" src="/alien.svg" width="200" height="200" />
@@ -127,7 +127,7 @@ if(user._value?.username) {
         },
 
         mounted() {
-            fetch(`https://api.gravitalia.com/users/${useRoute().params.id}`, {
+            fetch(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/users/${useRoute().params.id}`, {
                 headers: {
                     "Authorization": useCookie("token").value
                 }
