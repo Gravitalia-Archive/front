@@ -75,5 +75,6 @@
     "SVG, WEBP, PNG or JPG": "SVG, WEBP, PNG ou JPG",
     "• now": "• maintenant",
     "Add a legend, in 2,000 characters": "Ajoutez une légende, en 2 000 caractères",
-    "Publish": "Publier"
+    "Publish": "Publier",
+    "Oops! An error occurred while uploading, please try again later!": "Oups ! Une erreur s'est produite lors de la mise en ligne, réessayez plus tard !"
 }
