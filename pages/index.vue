@@ -173,6 +173,9 @@
                         content: "Connecting the world, allowing freedom is what Gravitalia does. Let us connect you!"
                     }
                 ],
+                link: [
+                    { rel: "canonical", href: `${useRuntimeConfig().public?.SITE_URL || "https://www.gravitalia.com"}/` }
+                ],
                 title: "Gravitalia"
             });
         },
