@@ -7,7 +7,7 @@
 
             <div class="flex items-center pt-4">
                 <div class="flex">
-                    <input @change="update_public" id="public" aria-describedby="public account check" type="checkbox" class="w-4 h-4" :checked="user?.public || true">
+                    <input v-model="public" aria-describedby="is your account public" type="checkbox" class="w-4 h-4" v-bind:checked="user ? user.public : true">
                 </div>
                 <div class="ml-2 text-sm">
                     <label for="public" class="font-medium text-gray-900 dark:text-gray-300">{{ $t("Public account") }}</label>
@@ -62,7 +62,8 @@
         data() {
             return {
                 user: null,
-                runtimeConfig: useRuntimeConfig().public
+                runtimeConfig: useRuntimeConfig().public,
+                public: true
             }
         },
 
@@ -75,17 +76,14 @@
                     }
                 })
                 .then(res => res.json());
+                this.public = this.user?.public || true;
             }
 
             if(!this.user) return await navigateTo(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/callback`, { external: true });
         },
 
-        methods: {
-            async callback(data) {
-                if(!data) return await navigateTo(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/callback`, { external: true });
-            },
-
-            update_public(event) {
+        watch: {
+            public(newBool, oldBool) {
                 document.getElementById("loading").classList.remove("hidden");
 
                 fetch(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/users/@me`, {
@@ -95,12 +93,18 @@
                         "Authorization": useCookie("token").value
                     },
                     body: JSON.stringify({
-                        public: event.target.checked
+                        public: newBool
                     })
                 }).then(res => res.json())
                 .then(_ => {
                     document.getElementById("loading").classList.add("hidden");
                 });
+            }
+        },
+
+        methods: {
+            async callback(data) {
+                if(!data) return await navigateTo(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/callback`, { external: true });
             },
 
             showModal() {
