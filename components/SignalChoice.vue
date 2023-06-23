@@ -42,12 +42,20 @@
 
 <script>
     export default {
+        props: {
+            id: {
+                type: String,
+                required: false
+            }
+        },
+        
         methods: {
             close_modal() {
                 document.getElementById("choice_signal").classList.add("hidden");
             },
 
             signal(reason) {
+                console.log(this.id)
                 const token = useCookie("token")?.value;
 
                 if(token && reason) {
@@ -58,7 +66,7 @@
                             "Content-Type": "application/json"
                         },
                         body: JSON.stringify({
-                            vanity: useRoute().params.id,
+                            vanity: this.id || useRoute().params.id,
                             platform: "gravitalia",
                             reason: reason
                         })
