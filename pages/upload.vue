@@ -17,7 +17,7 @@
                     </div>
                 -->
 
-                <img id="1" src="" class="hidden max-w-sm lg:max-w-lg max-h-[32rem]" alt="" />
+                <img id="1" src="" class="hidden max-h-[32rem]" alt="" />
                 
                 <div id="drop" class="flex">
                     <label for="dropzone" class="flex flex-col items-center justify-center w-full lg:w-96 h-[32rem] border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
@@ -34,7 +34,7 @@
                     <div class="flex py-2">
                         <img :src='user?.avatar ? runtimeConfig.CDN_URL+"/t_profile/"+user.avatar+".webp"  : "/avatar/"+(user?.username.match("[A-z]") ? user.username.match("[A-z]")[0].toUpperCase() : "A")+".webp"' class="rounded-full h-8 w-8" alt="" />
                         <NuxtLink :to="'/'+user?.vanity" prefetch class="pt-1 pl-2 font-semibold text-sm">{{ user?.vanity }}</NuxtLink>
-                        <p class="text-sm text-gray-500 pt-1 pl-1.5">{{ $t("• now") }}</p>
+                        <p class="text-sm text-gray-500 pt-1 pl-1.5">• {{ $t("now") }}</p>
 
                         <span class="pl-16 lg:pl-40 cursor-pointer">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7 cursor-pointer">
@@ -144,7 +144,7 @@
                     if(res.error) {
                         document.getElementById("error").classList.remove("hidden");
                     } else {
-                        return await navigateTo(`/${this.user.vanity}/${res.message}`);
+                        return await navigateTo(`/p/${res.message}`);
                     }
                 });
             }
