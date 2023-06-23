@@ -3,14 +3,15 @@
     <div>
         <div class="flex justify-center">
         <div class="flex h-fit gap-10 px-2 md:w-[22%]">
-            <img class="rounded-full w-32 h-32" :src="user?.avatar && exists ? runtimeConfig?.CDN_URL+'/t_avatar/'+user.avatar+'.webp' : `/avatar/${exists ? user?.username[0]?.toUpperCase()||'U' : 'U'}.webp`" draggable="false" alt="" />
+            <img class="rounded-full w-32 h-32" :src="user?.avatar && exists ? runtimeConfig?.CDN_URL+'/t_avatar/'+user.avatar+'.webp' : `/avatar/${exists ? user?.username[0]?.toUpperCase()||'U' : 'U'}.webp`" draggable="false" alt="" fetchpriority="high" />
 
             <div class="grid gap-3 w-full">
                 <div>
                     <div class="flex">
                         <h1 class="text-xl font-light">{{ exists ? user?.username || "Unknown account" : "Unknown account" }}</h1>
-                        <span class="pl-4"></span><button v-if="user && user?.vanity !== vanity && exists" id="subscribe" @click="relation('subscribe')" class="w-46 text-white bg-blue-600 dark:bg-blue-700 p-1.5 text-xs rounded-md font-semibold">{{ $t("Subscribe") }}</button>
-                        <button v-else-if="user && exists" class="w-46 bg-gray-200 dark:bg-gray-400 p-1.5 text-dark text-xs rounded-md font-semibold">{{ $t("Parameters") }}</button>
+                        <span class="pl-4"></span><button v-if="user && user?.vanity !== vanity && exists && !gv_user?.followed_by_viewer" id="subscriber" @click="relation('subscriber')" class="w-46 text-white bg-blue-600 dark:bg-blue-700 p-1.5 text-xs rounded-md font-semibold">{{ $t("Subscribe") }}</button>
+                        <button v-else-if="user && user?.vanity !== vanity && exists && gv_user?.followed_by_viewer" id="subscriber" @click="relation('subscriber')" class="w-46 bg-gray-200 dark:bg-gray-400 p-1.5 text-dark text-xs rounded-md font-semibold">{{ $t("Unsubscribe") }}</button>
+                        <NuxtLink prefetch to="/parameters" v-else-if="user && exists" class="cursor-pointer w-46 bg-gray-200 dark:bg-gray-400 p-1.5 text-dark text-xs rounded-md font-semibold">{{ $t("Parameters") }}</NuxtLink>
                         <div v-if="user && me && vanity !== user?.vanity && exists" class="flex">
                             <button type="button" aria-label="Action menu" class="z-50 pl-4" @click="showMenu()">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7 cursor-pointer">
@@ -29,60 +30,76 @@
                             </div>
                         </div>
                     </div>
-                    <div class="ul flex w-full justify-between">
-                    <p><b>{{ gv_user?.posts?.length||0 }}</b> {{ gv_user?.posts?.length||0 > 1 ? $t("photos") : $t("photo") }}</p>
-                    <p><b>{{ gv_user?.followers||0 }}</b> {{ gv_user?.followers||0 > 1 ? $t("followers") : $t("follower") }}</p>
-                    <p><b>{{ gv_user?.following||0 }}</b> {{ gv_user?.following||0 > 1 ? $t("subscriptions") : $t("subscription") }}</p>
+                    <div class="flex justify-between">
+                        <p class="text-sm"><b>{{ gv_user?.posts?.length||0 }}</b> {{ gv_user?.posts?.length||0 > 1 ? $t("photos") : $t("photo") }}</p>
+                        <p class="text-sm"><b>{{ gv_user?.followers||0 }}</b> {{ gv_user?.followers||0 > 1 ? $t("followers") : $t("follower") }}</p>
+                        <p class="text-sm"><b>{{ gv_user?.following||0 }}</b> {{ gv_user?.following||0 > 1 ? $t("subscriptions") : $t("subscription") }}</p>
                     </div>
                 </div>
-                <p><b class="pb-6">{{ exists ? user?.vanity : ""  }}</b><br />{{ exists ? user?.bio : "" }}</p>
+                <p><b class="pb-6">{{ exists ? user?.vanity : ""  }}</b><br /><span class="text-gray-700 text-sm">{{ exists ? user?.bio : "" }}</span></p>
             </div>
         </div>
             </div>
-            <hr class="my-8 h-px w-1/2 bg-gray-200 dark:bg-gray-700 border-0  mx-auto">
-            <div class="pt-4 flex justify-center">
-                <div class="w-1/2 grid grid-cols-3 space-x-7">
-                    <div v-for="post in gv_user?.posts||[]">
-                        <NuxtLink prefetch :to="'/'+user?.vanity+'/'+post.id" class="flex justify-start -space-x-[21.5rem]">
-                            <img class="w-[21.5rem] h-[21.5rem] aspect-square" :onmouseenter="'document.getElementById('+post.id+').classList.remove(\'hidden\')'" :onmouseleave="'document.getElementById('+post.id+').classList.add(\'hidden\')'" draggable="false" :alt="post.text" src="/test.webp" />
-                            <div :id="post.id" class="hidden bg-zinc-700/60 w-[21.5rem] h-[21.5rem] aspect-square inset-0 flex justify-center items-center text-white">
+            <hr class="my-8 h-px w-3/4 xl:w-2/3 2xl:w-[51.9%] bg-gray-200 dark:bg-gray-700 border-0 mx-auto">
+            <div class="flex justify-center">
+                <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 space-x-0 xl:space-x-4 space-y-4 xl:space-y-0">
+                    <div v-for="post in gv_user?.posts||[]" class="pt-4 flex justify-end items-center">
+                        <NuxtLink prefetch :to="'/p/'+post.id" class="flex justify-start -space-x-80">
+							<img
+                                :onmouseenter="'document.getElementById(\''+post.id+'\').classList.remove(\'hidden\')'"
+                                class="w-80 h-80"
+                                :src="runtimeConfig?.CDN_URL+'/t_media_lib_thumb/'+post.hash[0]+'.webp'"
+                                alt=""
+                                crossorigin="anonymous"
+                                loading="lazy"
+                                decoding="async"
+                                fetchpriority="low"
+                                referrerpolicy="no-referrer"
+                            />
+
+							<div :id="post.id" :onmouseleave="'document.getElementById(\''+post.id+'\').classList.add(\'hidden\')'" class="hidden w-80 h-80 bg-zinc-700/60 flex justify-center items-center text-white">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
                                     <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
                                 </svg>
-                                <p class="pl-2 text-white z-40 mix-blend-normal">{{ post.like }}</p>
-                            </div>
+                                <p class="pl-2 font-bold text-white z-40">{{ post.like }}</p>
+							</div>
                         </NuxtLink>
                     </div>
                 </div>
             </div>
+
             <div v-if="(gv_user?.posts||[]).length === 0">
-            <div class="flex flex-col items-center justify-center">
-                <div v-if="user?.vanity === vanity && exists">
-                    <img alt="" src="/post.svg" width="200" height="200" />
-                    <p class="pt-8 text-xl font-medium">{{ $t("On your marks, get set, shoot!") }}</p>
-                    <NuxtLink prefetch to="/upload"><p class="text-sm text-blue-600 hover:text-blue-800">{{ $t("Share your first adventure here") }}</p></NuxtLink>
-                </div>
-                <div v-else-if="!user?.username || !exists">
-                    <img alt="" src="/alien.svg" width="200" height="200" />
-                    <p class="pt-8 text-xl font-medium">{{ $t("The aliens have taken him away!") }}</p>
-                </div>
-                <div v-else>
-                    <img alt="" src="/post.svg" width="200" height="200" />
-                    <p class="pt-8 text-xl font-medium">{{ $t("No publication for the moment") }}</p>
+                <div class="flex flex-col items-center justify-center">
+                    <div v-if="user?.vanity === vanity && exists">
+                        <img alt="" src="/post.svg" width="200" height="200" />
+                        <p class="pt-8 text-xl font-medium">{{ $t("On your marks, get set, shoot!") }}</p>
+                        <NuxtLink prefetch to="/upload"><p class="text-sm text-blue-600 hover:text-blue-800">{{ $t("Share your first adventure here") }}</p></NuxtLink>
+                    </div>
+                    <div v-else-if="!user?.username || !exists">
+                        <img alt="" src="/alien.svg" width="200" height="200" />
+                        <p class="pt-8 text-xl font-medium">{{ $t("The aliens have taken him away!") }}</p>
+                    </div>
+                    <div v-else>
+                        <img alt="" src="/post.svg" width="200" height="200" />
+                        <p class="pt-8 text-xl font-medium">{{ $t("No publication for the moment") }}</p>
+                    </div>
                 </div>
             </div>
-        </div>
+            <div v-else>
+                <br /><br />
+                <Footer />
+            </div>
     </div>
 
     <SignalChoice />
 </template>
 
 <script setup>
-const { data: user } = await useFetch(`${useRuntimeConfig().public?.ACCOUNT_API_URL || "https://oauth.gravitalia.com"}/users/${useRoute().params.id}`, {
+const { data: user } = useCookie("token")?.value ? await useFetch(`${useRuntimeConfig().public?.ACCOUNT_API_URL || "https://oauth.gravitalia.com"}/users/${useRoute().params.id}`, {
     headers: {
-        "Authorization": useCookie("token")?.value||null
+        "Authorization": useCookie("token").value
     }
-});
+}) : await useFetch(`${useRuntimeConfig().public?.ACCOUNT_API_URL || "https://oauth.gravitalia.com"}/users/${useRoute().params.id}`, {});
 
 if(user._value?.username) {
     useHeadSafe({
@@ -133,11 +150,11 @@ if(user._value?.username) {
         },
 
         mounted() {
-            fetch(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/users/${useRoute().params.id}`, {
+            (useCookie("token")?.value ? fetch(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/users/${useRoute().params.id}`, {
                 headers: {
                     "Authorization": useCookie("token")?.value||null
                 }
-            })
+            }) : fetch(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/users/${useRoute().params.id}`, {}))
             .then(res => res.json())
             .then(res => {
                 if(res?.message === "Invalid user") {
