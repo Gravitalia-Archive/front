@@ -151,6 +151,25 @@
     </div>
 </template>
 
+<script setup>
+useHead({
+    meta: [
+        {
+            name: "description",
+            content: "Connecting the world, allowing freedom is what Gravitalia does. Let us connect you!"
+        },
+        {
+            property: "og:description",
+            content: "Connecting the world, allowing freedom is what Gravitalia does. Let us connect you!"
+        }
+    ],
+    link: [
+        { rel: "canonical", href: `${useRuntimeConfig().public?.SITE_URL || "https://www.gravitalia.com"}/` }
+    ],
+    title: "Gravitalia"
+});
+</script>
+
 <script>
     export default {
         data() {
@@ -159,25 +178,6 @@
                 recommendation: [],
                 runtimeConfig: useRuntimeConfig().public
             }
-        },
-        
-        created() {
-            useHead({
-                meta: [
-                    {
-                        name: "description",
-                        content: "Connecting the world, allowing freedom is what Gravitalia does. Let us connect you!"
-                    },
-                    {
-                        property: "og:description",
-                        content: "Connecting the world, allowing freedom is what Gravitalia does. Let us connect you!"
-                    }
-                ],
-                link: [
-                    { rel: "canonical", href: `${useRuntimeConfig().public?.SITE_URL || "https://www.gravitalia.com"}/` }
-                ],
-                title: "Gravitalia"
-            });
         },
 
         async mounted() {

@@ -5,23 +5,40 @@
             <div class="relative m-auto">
                 <div class="flex flex-col lg:flex-row h-max w-full rounded-r border">
                     <img
-                        id="1"
-                        :src="post?.hash ? runtimeConfig?.CDN_URL+'/t_post/'+post.hash[0]+'.webp' : ''"
+                        v-for="image in post.hash.length"
+                        :id="image"
+                        :src="post?.hash ? runtimeConfig?.CDN_URL+'/t_post/'+post.hash[image-1]+'.webp' : ''"
                         class="max-h-[32rem]"
                         alt=""
                         crossorigin="anonymous"
                         loading="eager"
                         decoding="sync"
-                        fetchpriority="high"
+                        :fetchpriority="image === 1 ? 'high' : 'low'"
                         referrerpolicy="no-referrer"
                         draggable="false"
                         :alt="post?.text"
                     />
 
+                    <div class="flex justify-center space-x-4">
+                        <button @click="next()" id="next_img" type="button" class="absolute w-10 h-10 top-64 inset-y-0 right-4 xl:right-96 rounded-full bg-gray-200/70 flex justify-center items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                            </svg>
+                            <span class="sr-only">Next image</span>
+                        </button>
+
+                        <button @click="previous()" id="prev_img" type="button" class="absolute w-10 h-10 inset-y-0 left-0 top-64 rounded-full bg-gray-200/70 flex justify-center items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                            </svg>
+                            <span class="sr-only">Previous image</span>
+                        </button>
+                    </div>
+
                     <div class="px-4 pt-2">
                         <div class="flex py-2">
-                            <img :src='user?.avatar ? runtimeConfig.CDN_URL+"/t_profile/"+user.avatar+".webp" : "/avatar/"+(user?.username.match("[A-z]") ? user.username.match("[A-z]")[0].toUpperCase() : "A")+".webp"' class="rounded-full h-8 w-8" alt="" />
-                            <NuxtLink :to="'/'+user?.vanity" prefetch class="pt-1 pl-2 font-semibold text-sm">{{ user?.vanity || "" }}</NuxtLink>
+                            <img :src='user?.avatar ? runtimeConfig.CDN_URL+"/t_profile/"+user.avatar+".webp" : "/avatar/"+(user?.username?.match("[A-z]") ? user.username.match("[A-z]")[0].toUpperCase() : "A")+".webp"' class="rounded-full h-8 w-8" alt="" />
+                            <NuxtLink :to="'/'+post?.author" prefetch class="pt-1 pl-2 font-semibold text-sm">{{ post?.author || "Loading..." }}</NuxtLink>
                             <p class="text-sm text-gray-500 pt-1 pl-1.5">• {{ post?.id ? timestampToDate(snowflakeToTimestamp(post.id)) : $t("now") }}</p>
 
                             <button type="button" aria-label="Action menu" class="z-20 pl-16 lg:pl-40" @click="showMenu()">
@@ -44,12 +61,12 @@
                         <hr />
 
                         <div v-if="post?.text" class="pt-4 flex">
-                            <NuxtLink :to="'/'+user?.vanity" prefetch>
-                                <img :src='user?.avatar ? runtimeConfig.CDN_URL+"/t_profile/"+user.avatar+".webp" : "/avatar/"+(user?.username.match("[A-z]") ? user.username.match("[A-z]")[0].toUpperCase() : "A")+".webp"' class="rounded-full h-10 w-10" alt="" draggable="false" />
+                            <NuxtLink :to="'/'+post?.author" prefetch>
+                                <img :src='user?.avatar ? runtimeConfig.CDN_URL+"/t_profile/"+user.avatar+".webp" : "/avatar/"+(user?.username?.match("[A-z]") ? user.username.match("[A-z]")[0].toUpperCase() : "A")+".webp"' class="rounded-full h-10 w-10" alt="" draggable="false" />
                             </NuxtLink>
 
                             <div class="flex-col">
-                                <NuxtLink :to="'/'+user?.vanity" prefetch class="pt-1 pl-2 font-semibold text-sm">{{ user?.vanity || "" }}</NuxtLink>
+                                <NuxtLink :to="'/'+post?.author" prefetch class="pt-1 pl-2 font-semibold text-sm">{{ post?.author || "Loading..." }}</NuxtLink>
                                 <p class="pl-2 w-full text-sm text-gray-600 dark:text-white">{{ post?.text }}</p>
                             </div>
                         </div>
@@ -69,44 +86,93 @@
 </template>
 
 <script setup>
-useHeadSafe({
+const runtimeConfig = useRuntimeConfig().public;
+const token = useCookie("token");
+const id = useRoute().params.id;
+
+const { data: post } = token.value ? await useFetch(`${runtimeConfig?.API_URL || "https://api.gravitalia.com"}/posts/${id}`, {
+    headers: {
+        "Authorization": token.value
+    }
+}) : await useFetch(`${runtimeConfig?.API_URL || "https://api.gravitalia.com"}/posts/${id}`);
+
+const { data: user } = await useFetch(`${runtimeConfig?.ACCOUNT_API_URL || "https://oauth.gravitalia.com"}/users/${post.value.author}`, {
+    lazy: true,
+    server: false
+});
+
+useHead({
     meta: [
         {
             name: "description",
-            content: "Discover more accounts, new photos and more!"
+            content: `View ${post.value.author}'s photo, with ${post.value.like} likes`
         },
         {
             property: "og:description",
-            content: "Discover more accounts, new photos and more!"
+            content: `View ${post.value.author}'s photo, with ${post.value.like} likes`
+        },
+        ,
+        {
+            property: "og:image",
+            content: `${runtimeConfig?.CDN_URL}/t_media_lib_thumb/${post.value.hash[0]}.webp`
+        },
+        {
+            property: "twitter:card",
+            content: "summary_large_image"
+        },
+        {
+            property: "twitter:url",
+            content: `${runtimeConfig?.CDN_URL}/t_media_lib_thumb/${post.value.hash[0]}.webp`
         }
     ],
     link: [
-        { rel: "canonical", href: `${useRuntimeConfig().public?.SITE_URL || "https://www.gravitalia.com"}/${useRoute().params.id}` }
-    ]
+        { rel: "canonical", href: `${runtimeConfig?.SITE_URL || "https://www.gravitalia.com"}/p/${id}` }
+    ],
+    script: [
+        {
+            type: "application/ld+json",
+            children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "SocialMediaPosting",
+                "mainEntityOfPage": {
+                    "@type": "WebPage",
+                    "@id": `${runtimeConfig?.SITE_URL || "https://www.gravitalia.com"}/p/${id}`
+                },
+                "datePublished": "2023-01-01T12:00:00-07:00",
+                "author": {
+                    "@type": "Person",
+                    "name": post.value.author,
+                    "url": `${runtimeConfig?.SITE_URL || "https://www.gravitalia.com"}/${post.value.author}`
+                },
+                "publisher": {
+                    "@type": "Organization",
+                    "name": "Gravitalia",
+                    "logo": {
+                        "@type": "ImageObject",
+                        "url": `${runtimeConfig?.SITE_URL || "https://www.gravitalia.com"}/favicon.webp`,
+                        "width": 96,
+                        "height": 96
+                    }
+                },
+                "image": {
+                    "@type": "ImageObject",
+                    "url": `${runtimeConfig?.CDN_URL}/t_post/${post.value.hash[0]}.webp`,
+                },
+                "description": post.value.text
+            })
+        }
+    ],
+    title: "Gravitalia"
 });
 </script>
 
 <script>
     export default {
-        data() {
+        async data() {
             return {
                 me: null,
-                user: null,
-                post: null,
                 runtimeConfig: useRuntimeConfig().public
             }
-        },
-
-        async mounted() {
-            this.post = await (useCookie("token")?.value ? fetch(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/posts/${useRoute().params.id}`, {
-                headers: {
-                    "Authorization": useCookie("token")?.value||null
-                }
-            }) : fetch(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/posts/${useRoute().params.id}`, {}))
-            .then(res => res.json());
-
-            this.user = await fetch(`${this.runtimeConfig?.ACCOUNT_API_URL || "https://oauth.gravitalia.com"}/users/${this.post?.author}`)
-                .then(res => res.json());
         },
 
         methods: {

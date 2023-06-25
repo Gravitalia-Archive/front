@@ -56,7 +56,7 @@ const runtimeConfig = useRuntimeConfig().public;
 const token = useCookie("token");
 const { data: user } = token.value ? await useFetch(`${runtimeConfig?.ACCOUNT_API_URL || "https://oauth.gravitalia.com"}/users/@me`, {
     headers: {
-        "Authorization": useCookie("token").value
+        "Authorization": token.value
     }
 }) : {data: null};
 

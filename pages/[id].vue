@@ -102,24 +102,42 @@ const { data: user } = useCookie("token")?.value ? await useFetch(`${useRuntimeC
 }) : await useFetch(`${useRuntimeConfig().public?.ACCOUNT_API_URL || "https://oauth.gravitalia.com"}/users/${useRoute().params.id}`, {});
 
 if(user._value?.username) {
-    useHeadSafe({
+    useHead({
         meta: [
             {
+                property: "og:title",
+                content: `${user._value.username} (@${user._value.vanity}) / Gravitalia`
+            },
+            {
                 name: "description",
-                content: `Access to the ${user._value.username}'s photos and much more!`
+                content: `Access to ${user._value.username}'s photos and much more!`
             },
             {
                 property: "og:description",
-                content: `Access to the ${user._value.username}'s photos and much more!`
+                content: `Access to ${user._value.username}'s photos and much more!`
             }
         ],
         link: [
             { rel: "canonical", href: `${useRuntimeConfig().public?.SITE_URL || "https://www.gravitalia.com"}/${user._value.vanity}` }
         ],
+        script: [
+            {
+                type: "application/ld+json",
+                children: JSON.stringify({
+                    "@context": "http://schema.org",
+                    "@type": "Person",
+                    "@id": `${useRuntimeConfig().public?.SITE_URL || "https://www.gravitalia.com"}/${user._value.vanity}`,
+                    "name": user._value.username,
+                    "url": `${useRuntimeConfig().public?.SITE_URL || "https://www.gravitalia.com"}/${user._value.vanity}`,
+                    "image": user._value?.avatar ? useRuntimeConfig().public?.CDN_URL+'/t_avatar/'+user._value.avatar+'.webp' : `${useRuntimeConfig().public?.SITE_URL || "https://www.gravitalia.com"}/avatar/${user._value?.username[0]?.toUpperCase() || "U"}.webp`,
+                    "description": user._value?.bio || ""
+                })
+            }
+        ],
         title: `${user._value.username} (@${user._value.vanity}) / Gravitalia`
     });
 } else {
-    useHeadSafe({
+    useHead({
         meta: [
             {
                 name: "description",
@@ -132,7 +150,8 @@ if(user._value?.username) {
         ],
         link: [
             { rel: "canonical", href: `${useRuntimeConfig().public?.SITE_URL || "https://www.gravitalia.com"}/${useRoute().params.id}` }
-        ]
+        ],
+        title: "Gravitalia"
     });
 }
 </script>

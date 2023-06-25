@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<url>
+    <loc>https://www.gravitalia.com/</loc>
+</url>
+<url>
+    <loc>https://www.gravitalia.com/explore</loc>
+</url>
+<url>
+    <loc>https://www.gravitalia.com/realhinome</loc>
+    <priority>0.8</priority>
+</url>
+<url>
+    <loc>https://www.gravitalia.com/garder500</loc>
+    <priority>0.8</priority>
+</url></urlset>
