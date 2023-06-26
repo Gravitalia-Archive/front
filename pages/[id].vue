@@ -24,16 +24,16 @@
                                         <polygon class="fill-slate-100 dark:fill-zinc-800 dark:stroke-zinc-700" points="15, 0 30, 20 0, 20"/>
                                     </svg>
                                     <!-- <div class="w-full cursor-pointer"><span class="block px-4 py-2 text-sm font-semibold text-red-600 dark:text-white">{{ $t("Global block") }}</span></div> -->
-                                    <div class="w-full cursor-pointer" @click="relation('block')"><span id="block" class="block px-4 py-2 text-sm font-semibold text-red-600 dark:text-white">{{ $t("Platform block") }}</span></div>
+                                    <div class="w-full cursor-pointer" @click="relation('block')"><span id="block" class="block px-4 py-2 text-sm font-semibold text-red-600 dark:text-white">{{ blocked ? $t("Platform unblock") : $t("Platform block") }}</span></div>
                                     <div class="w-full cursor-pointer" @click="showModal()"><span class="block px-4 py-2 text-sm text-gray-700 dark:text-white">{{ $t("Report") }}</span></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="flex justify-between">
-                        <p class="text-sm"><b>{{ gv_user?.posts?.length||0 }}</b> {{ gv_user?.posts?.length||0 > 1 ? $t("photos") : $t("photo") }}</p>
-                        <p class="text-sm"><b>{{ gv_user?.followers||0 }}</b> {{ gv_user?.followers||0 > 1 ? $t("followers") : $t("follower") }}</p>
-                        <p class="text-sm"><b>{{ gv_user?.following||0 }}</b> {{ gv_user?.following||0 > 1 ? $t("subscriptions") : $t("subscription") }}</p>
+                        <p class="text-sm"><b>{{ gv_user?.posts?.length||0 }}</b> {{ gv_user?.posts?.length||0 >= 2 ? $t("photos") : $t("photo") }}</p>
+                        <p class="text-sm"><b>{{ gv_user?.followers||0 }}</b> {{ gv_user?.followers||0 >= 2 ? $t("followers") : $t("follower") }}</p>
+                        <p class="text-sm"><b>{{ gv_user?.following||0 }}</b> {{ gv_user?.following||0 >= 2 ? $t("subscriptions") : $t("subscription") }}</p>
                     </div>
                 </div>
                 <p><b class="pb-6">{{ exists ? user?.vanity : ""  }}</b><br /><span class="text-gray-700 text-sm">{{ exists ? user?.bio : "" }}</span></p>
@@ -164,14 +164,15 @@ if(user._value?.username) {
                 vanity: "",
                 me: null,
                 gv_user: null,
-                runtimeConfig: useRuntimeConfig().public
+                runtimeConfig: useRuntimeConfig().public,
+                blocked: false
             }
         },
 
-        mounted() {
+        async mounted() {
             (useCookie("token")?.value ? fetch(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/users/${useRoute().params.id}`, {
                 headers: {
-                    "Authorization": useCookie("token")?.value||null
+                    "Authorization": useCookie("token").value
                 }
             }) : fetch(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/users/${useRoute().params.id}`, {}))
             .then(res => res.json())
@@ -182,6 +183,14 @@ if(user._value?.username) {
                     this.gv_user = res;
                 }
             });
+
+            this.blocked = await fetch(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/relation/block?target=${useRoute().params.id}`, {
+                headers: {
+                    "Authorization": useCookie("token").value
+                }
+            })
+            .then(res => res.json())
+            .then(res => res.message === "existent");
         },
 
         methods: {

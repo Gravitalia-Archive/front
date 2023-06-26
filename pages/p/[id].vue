@@ -3,12 +3,12 @@
     <div>
         <div class="flex h-[73vh] md:h-[75vh] xl:h-[80vh]">
             <div class="relative m-auto">
-                <div class="flex flex-col lg:flex-row h-max w-full rounded-r border">
+                <div class="flex flex-col lg:flex-row h-max w-full rounded-r border dark:border-zinc-800">
                     <img
                         v-for="image in post.hash.length"
                         :id="image"
                         :src="post?.hash ? runtimeConfig?.CDN_URL+'/t_post/'+post.hash[image-1]+'.webp' : ''"
-                        class="max-h-[32rem]"
+                        :class="image === 1 ? 'max-h-[32rem]' : 'hidden max-h-[32rem]'"
                         alt=""
                         crossorigin="anonymous"
                         loading="eager"
@@ -20,14 +20,14 @@
                     />
 
                     <div class="flex justify-center space-x-4">
-                        <button @click="next()" id="next_img" type="button" class="absolute w-10 h-10 top-64 inset-y-0 right-4 xl:right-96 rounded-full bg-gray-200/70 flex justify-center items-center">
+                        <button @click="next()" id="next_img" type="button" :class="post.hash.length > 1 ? 'absolute w-10 h-10 top-28 xl:top-64 inset-y-0 right-4 xl:right-[27rem] rounded-full bg-gray-200/70 flex justify-center items-center' : 'hidden absolute w-10 h-10 top-28 xl:top-64 inset-y-0 right-4 xl:right-[27rem] rounded-full bg-gray-200/70 flex justify-center items-center'">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                             </svg>
                             <span class="sr-only">Next image</span>
                         </button>
 
-                        <button @click="previous()" id="prev_img" type="button" class="absolute w-10 h-10 inset-y-0 left-0 top-64 rounded-full bg-gray-200/70 flex justify-center items-center">
+                        <button @click="previous()" id="prev_img" type="button" class="hidden absolute w-10 h-10 inset-y-0 left-0 top-28 xl:top-64 rounded-full bg-gray-200/70 flex justify-center items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
                             </svg>
@@ -35,11 +35,11 @@
                         </button>
                     </div>
 
-                    <div class="px-4 pt-2">
-                        <div class="flex py-2">
+                    <div class="pt-2 flex flex-col">
+                        <div class="px-4 flex py-2">
                             <img :src='user?.avatar ? runtimeConfig.CDN_URL+"/t_profile/"+user.avatar+".webp" : "/avatar/"+(user?.username?.match("[A-z]") ? user.username.match("[A-z]")[0].toUpperCase() : "A")+".webp"' class="rounded-full h-8 w-8" alt="" />
                             <NuxtLink :to="'/'+post?.author" prefetch class="pt-1 pl-2 font-semibold text-sm">{{ post?.author || "Loading..." }}</NuxtLink>
-                            <p class="text-sm text-gray-500 pt-1 pl-1.5">• {{ post?.id ? timestampToDate(snowflakeToTimestamp(post.id)) : $t("now") }}</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-200 pt-1 pl-1.5">• {{ post?.id ? timestampToDate(snowflakeToTimestamp(post.id)) : $t("now") }}</p>
 
                             <button type="button" aria-label="Action menu" class="z-20 pl-16 lg:pl-40" @click="showMenu()">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7">
@@ -58,9 +58,9 @@
                             </div>
                         </div>
 
-                        <hr />
+                        <hr class="h-px bg-gray-200 border-0 dark:bg-gray-700" />
 
-                        <div v-if="post?.text" class="pt-4 flex">
+                        <div v-if="post?.text" class="px-4 pt-4 flex">
                             <NuxtLink :to="'/'+post?.author" prefetch>
                                 <img :src='user?.avatar ? runtimeConfig.CDN_URL+"/t_profile/"+user.avatar+".webp" : "/avatar/"+(user?.username?.match("[A-z]") ? user.username.match("[A-z]")[0].toUpperCase() : "A")+".webp"' class="rounded-full h-10 w-10" alt="" draggable="false" />
                             </NuxtLink>
@@ -71,9 +71,25 @@
                             </div>
                         </div>
 
-                        <div v-if="post?.comments.length === 0 || post?.comments[0].id === null" class="pt-28 flex flex-col justify-center items-center">
+                        <div v-if="post?.comments.length === 0 || post?.comments[0].id === null" class="pt-16 flex flex-col justify-center items-center">
                             <img src="/comment.svg" alt="" width="300" fetchpriority="low" />
                             <p class="font-semibold pt-6">{{ $t("Be the first to comment!") }}</p>
+                        </div>
+
+                        <div class="mt-auto w-full border-t dark:border-gray-700 p-2">
+                            <div @click="relation('like')" class="flex cursor-pointer w-1/4">
+                                <svg id="liked" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" :class="liked_post ? 'text-red-500 fill-red-500 w-6 h-6' : 'w-6 h-6'">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                                </svg>
+                                <p class="font-semibold text-sm pt-0.5">{{ $t("Like") }}</p>
+                            </div>
+                            
+                            <div class="flex">
+                                <input type="text" class="mt-2.5 px-2 w-80 py-1 border-none rounded text-sm dark:bg-zinc-800 dark:placeholder-white" placeholder="Type your message..." maxlength="250" />
+                                <button type="button" class="mx-4 pt-2 font-bold text-sm text-purple-500 cursor-not-allowed" disabled>
+                                    {{ $t("Publish") }}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -81,8 +97,10 @@
         </div>
     </div>
 
-    <Footer absolute="true" />
-    <SignalChoice :id="useRoute().params.id" />
+    <div class="hidden lg:block">
+        <Footer absolute="true" />
+    </div>
+    <SignalChoice :id="id" />
 </template>
 
 <script setup>
@@ -164,15 +182,67 @@ useHead({
     ],
     title: "Gravitalia"
 });
+
+let last_photo = 1;
+
+function previous() {
+    last_photo--;
+
+    if(last_photo < post.value.hash.length) {
+        document.getElementById("next_img").classList.remove("hidden");
+    }
+
+    if (last_photo == 1) {
+        document.getElementById("prev_img").classList.add("hidden");
+    }
+
+    document.getElementById((last_photo).toString()).classList.remove("hidden");
+    document.getElementById("next_img").classList.remove("hidden");
+
+    const old_img = document.getElementById((last_photo+1).toString());
+    old_img.classList.add("hidden");
+}
+
+function next() {
+    last_photo++;
+
+    if(last_photo >= post.value.hash.length) {
+        document.getElementById("next_img").classList.add("hidden");
+    }
+
+    if (last_photo > 1) {
+        document.getElementById("prev_img").classList.remove("hidden");
+    }
+
+    document.getElementById((last_photo-1).toString()).classList.add("hidden");
+
+    const new_img = document.getElementById((last_photo).toString());
+    if(new_img.src && new_img.src?.includes("cloud")) {
+        new_img.classList.remove("hidden");
+    } else {
+        document.getElementById("next_img").classList.add("hidden");
+    }
+}
 </script>
 
 <script>
     export default {
-        async data() {
+        data() {
             return {
                 me: null,
-                runtimeConfig: useRuntimeConfig().public
+                runtimeConfig: useRuntimeConfig().public,
+                liked_post: false
             }
+        },
+
+        async mounted() {
+            this.liked_post = await fetch(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/relation/like?target=${useRoute().params.id}`, {
+                headers: {
+                    "Authorization": useCookie("token").value
+                }
+            })
+            .then(res => res.json())
+            .then(res => res.message === "existent")
         },
 
         methods: {
@@ -222,21 +292,11 @@ useHead({
                 .then(res => res.json())
                 .then(res => {
                     if(res.message === "Created relation") {
-                        if(type === "block") {
-                            document.getElementById(type).innerText = this.$t("Platform unblock");
-                        } else {
-                            document.getElementById(type).classList.add("bg-gray-200", "dark:bg-gray-400", "text-dark");
-                            document.getElementById(type).classList.remove("bg-blue-500", "dark:bg-blue-600", "text-white");
-                            document.getElementById(type).innerText = this.$t("Unsubscribe");
-                        }
+                        document.getElementById("liked").classList.add("text-red-500");
+                        document.getElementById("liked").classList.add("fill-red-500");
                     } else {
-                        if(type === "block") {
-                            document.getElementById(type).innerText = this.$t("Platform block");
-                        } else {
-                            document.getElementById(type).classList.remove("bg-gray-200", "dark:bg-gray-400", "text-dark");
-                            document.getElementById(type).classList.add("bg-blue-500", "dark:bg-blue-600", "text-white");
-                            document.getElementById(type).innerText = this.$t("Subscribe");
-                        }
+                        document.getElementById("liked").classList.remove("text-red-500");
+                        document.getElementById("liked").classList.remove("fill-red-500");
                     }
                 });
             }
