@@ -35,7 +35,7 @@
                                         <polygon class="fill-slate-100 dark:fill-zinc-800 dark:stroke-zinc-700" points="15, 0 30, 20 0, 20"/>
                                     </svg>
                                     <p class="block px-4 py-2 text-sm text-gray-800 dark:text-gray-100">{{ $t("Signed in as") }}<br /><strong>{{ user.username }}</strong></p>
-                                    <hr />
+                                    <hr class="h-px bg-gray-200 border-0 dark:bg-zinc-600" />
                                     <NuxtLink :to="'/'+user.vanity" prefetch class="block px-4 py-2 text-sm text-gray-700 dark:text-white">{{ $t("Profile") }}</NuxtLink>
                                     <NuxtLink to="/parameters" prefetch class="block px-4 py-2 text-sm text-gray-700 dark:text-white">{{ $t("Parameters") }}</NuxtLink>
                                     <NuxtLink to="/upload" prefetch class="block px-4 py-2 text-sm text-gray-700 dark:text-white">{{ $t("New post") }}</NuxtLink>
