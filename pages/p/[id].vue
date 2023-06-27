@@ -71,9 +71,22 @@
                             </div>
                         </div>
 
-                        <div v-if="post?.comments.length === 0 || post?.comments[0].id === null" class="pt-16 flex flex-col justify-center items-center">
+                        <div v-if="comments.length === 0 && (post?.comments.length === 0 || post?.comments[0].id === null)" class="pt-16 flex flex-col justify-center items-center">
                             <img src="/comment.svg" alt="" width="300" fetchpriority="low" />
                             <p class="font-semibold pt-6">{{ $t("Be the first to comment!") }}</p>
+                        </div>
+                        <div v-else class="pt-2">
+                            <div v-for="comment in [...post?.comments, ...comments]" class="pt-1 pl-4 flex">
+                                <NuxtLink :to="'/'+comment.user" prefetch class="font-semibold text-sm">{{ comment.user }}</NuxtLink>
+
+                                <p class="pl-1 text-sm">
+                                    {{ comment.text }}
+                                </p>
+
+                                <svg @click="deleteComment(comment.id)" v-if="me?.vanity && me?.vanity === comment.user" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ml-1 mt-0.5 text-gray-600 w-4 h-4 cursor-pointer">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                </svg>
+                            </div>
                         </div>
 
                         <div class="mt-auto w-full border-t dark:border-gray-700 p-2">
@@ -81,12 +94,12 @@
                                 <svg id="liked" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" :class="liked_post ? 'text-red-500 fill-red-500 w-6 h-6' : 'w-6 h-6'">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
                                 </svg>
-                                <p class="font-semibold text-sm pt-0.5">{{ $t("Like") }}</p>
+                                <p id="nb_likes" class="font-semibold text-sm pt-0.5 pl-1">{{ post?.like }} {{ $t("Like") }}</p>
                             </div>
                             
                             <div class="flex">
-                                <input type="text" class="mt-2.5 px-2 w-80 py-1 border-none rounded text-sm dark:bg-zinc-800 dark:placeholder-white" placeholder="Type your message..." maxlength="250" />
-                                <button type="button" class="mx-4 pt-2 font-bold text-sm text-purple-500 cursor-not-allowed" disabled>
+                                <input v-model="new_comment" type="text" class="mt-2.5 px-2 w-80 py-1 border-none rounded text-sm dark:bg-zinc-800 dark:placeholder-white" placeholder="Type your message..." maxlength="250" />
+                                <button @click="addComment()" type="button" class="mx-4 pt-2 font-bold text-sm text-purple-500 disabled:text-purple-500/50 disabled:cursor-not-allowed" v-bind:disabled="new_comment === '' || !me?.vanity">
                                     {{ $t("Publish") }}
                                 </button>
                             </div>
@@ -108,7 +121,7 @@ const runtimeConfig = useRuntimeConfig().public;
 const token = useCookie("token");
 const id = useRoute().params.id;
 
-const { data: post } = token.value ? await useFetch(`${runtimeConfig?.API_URL || "https://api.gravitalia.com"}/posts/${id}`, {
+let { data: post } = token.value ? await useFetch(`${runtimeConfig?.API_URL || "https://api.gravitalia.com"}/posts/${id}`, {
     headers: {
         "Authorization": token.value
     }
@@ -183,8 +196,34 @@ useHead({
     title: "Gravitalia"
 });
 
-let last_photo = 1;
+async function relation(type) {
+    if(!useCookie("token").value) return await navigateTo(`${runtimeConfig?.API_URL || "https://api.gravitalia.com"}/callback`, { external: true });
 
+    fetch(`${runtimeConfig?.API_URL || "https://api.gravitalia.com"}/relation/${type}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": useCookie("token").value
+        },
+        body: JSON.stringify({
+            id: useRoute().params.id
+        })
+    })
+    .then(res => res.json())
+    .then(res => {
+        if(res.message === "Created relation") {
+            document.getElementById("liked").classList.add("text-red-500");
+            document.getElementById("liked").classList.add("fill-red-500");
+            post.value.like += 1;
+        } else {
+            document.getElementById("liked").classList.remove("text-red-500");
+            document.getElementById("liked").classList.remove("fill-red-500");
+            post.value.like -= 1;
+        }
+    });
+}
+
+let last_photo = 1;
 function previous() {
     last_photo--;
 
@@ -231,7 +270,9 @@ function next() {
             return {
                 me: null,
                 runtimeConfig: useRuntimeConfig().public,
-                liked_post: false
+                liked_post: false,
+                new_comment: "",
+                comments: []
             }
         },
 
@@ -276,27 +317,47 @@ function next() {
                 return ((day < 10) ? '0' + day : day) + '/' + ((month < 10) ? '0' + month : month) + '/' + date.getFullYear();
             },
 
-            async relation(type) {
-                if(!useCookie("token").value) return await navigateTo(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/callback`, { external: true });
+            addComment() {
+                if(this.new_comment === "" || !this.me?.vanity) return;
 
-                fetch(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/relation/${type}`, {
+                fetch(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/comment/${useRoute().params.id}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                         "Authorization": useCookie("token").value
                     },
                     body: JSON.stringify({
-                        id: useRoute().params.id
+                        content: this.new_comment
                     })
                 })
                 .then(res => res.json())
                 .then(res => {
-                    if(res.message === "Created relation") {
-                        document.getElementById("liked").classList.add("text-red-500");
-                        document.getElementById("liked").classList.add("fill-red-500");
-                    } else {
-                        document.getElementById("liked").classList.remove("text-red-500");
-                        document.getElementById("liked").classList.remove("fill-red-500");
+                    if(!res.error) {
+                        this.comments.push({
+                            "id": res.message,
+                            "love": 0,
+                            "me_loved": false,
+                            "text": this.new_comment,
+                            "timestamp": null,
+                            "user": this.me.vanity
+                        })
+                        this.new_comment = "";
+                    }
+                });
+            },
+
+            deleteComment(id) {
+                fetch(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/comment/${id}`, {
+                    method: "DELETE",
+                    headers: {
+                        "Authorization": useCookie("token").value
+                    }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    if(!res.error) {
+                        // Delete comment from post instead of reload page
+                        window.location.reload();
                     }
                 });
             }

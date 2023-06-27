@@ -32,7 +32,7 @@
                     </div>
                     <div class="flex justify-between">
                         <p class="text-sm"><b>{{ gv_user?.posts?.length||0 }}</b> {{ gv_user?.posts?.length||0 >= 2 ? $t("photos") : $t("photo") }}</p>
-                        <p class="text-sm"><b>{{ gv_user?.followers||0 }}</b> {{ gv_user?.followers||0 >= 2 ? $t("followers") : $t("follower") }}</p>
+                        <p class="text-sm"><b id="nb_followers">{{ gv_user?.followers||0 }}</b> {{ gv_user?.followers||0 >= 2 ? $t("followers") : $t("follower") }}</p>
                         <p class="text-sm"><b>{{ gv_user?.following||0 }}</b> {{ gv_user?.following||0 >= 2 ? $t("subscriptions") : $t("subscription") }}</p>
                     </div>
                 </div>
@@ -233,6 +233,8 @@ if(user._value?.username) {
                             document.getElementById(type).classList.add("bg-gray-200", "dark:bg-gray-400", "text-dark");
                             document.getElementById(type).classList.remove("bg-blue-500", "dark:bg-blue-600", "text-white");
                             document.getElementById(type).innerText = this.$t("Unsubscribe");
+                            const nb_followers = document.getElementById("nb_followers");
+                            nb_followers.innerText = parseInt(nb_followers.innerText, 10) + 1;
                         }
                     } else {
                         if(type === "block") {
@@ -241,6 +243,8 @@ if(user._value?.username) {
                             document.getElementById(type).classList.remove("bg-gray-200", "dark:bg-gray-400", "text-dark");
                             document.getElementById(type).classList.add("bg-blue-500", "dark:bg-blue-600", "text-white");
                             document.getElementById(type).innerText = this.$t("Subscribe");
+                            const nb_followers = document.getElementById("nb_followers");
+                            nb_followers.innerText = parseInt(nb_followers.innerText, 10) - 1;
                         }
                     }
                 });

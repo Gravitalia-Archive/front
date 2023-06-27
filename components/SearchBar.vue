@@ -33,6 +33,7 @@
         watch: {
             query(newQuery, oldQuery) {
                 this.results = [];
+                if(newQuery === "") return;
 
                 fetch(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/search/research?q=${newQuery}`)
                     .then(res => res.json())
