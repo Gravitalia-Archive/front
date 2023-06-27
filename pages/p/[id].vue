@@ -277,13 +277,13 @@ function next() {
         },
 
         async mounted() {
-            this.liked_post = await fetch(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/relation/like?target=${useRoute().params.id}`, {
+            this.liked_post = useCookie("token").value ? await fetch(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/relation/like?target=${useRoute().params.id}`, {
                 headers: {
                     "Authorization": useCookie("token").value
                 }
             })
             .then(res => res.json())
-            .then(res => res.message === "existent")
+            .then(res => res.message === "existent") : false;
         },
 
         methods: {

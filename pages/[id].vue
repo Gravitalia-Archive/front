@@ -184,13 +184,13 @@ if(user._value?.username) {
                 }
             });
 
-            this.blocked = await fetch(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/relation/block?target=${useRoute().params.id}`, {
+            this.blocked = useCookie("token").value ? await fetch(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/relation/block?target=${useRoute().params.id}`, {
                 headers: {
                     "Authorization": useCookie("token").value
                 }
             })
             .then(res => res.json())
-            .then(res => res.message === "existent");
+            .then(res => res.message === "existent") : false;
         },
 
         methods: {
