@@ -1,7 +1,7 @@
 <template>
     <Navbar @userData="callback" />
     <div class="flex flex-col md:flex-row justify-center space-y-12 md:space-y-0 md:space-x-24 px-2">
-        <div class="w-full md:w-1/3 p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+        <div class="w-full md:w-1/3 p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-zinc-800 dark:border-zinc-700">
             <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ $t("Account") }}</h5>
             <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{{ $t("Update account information, such as plan, private account and much more!") }}</p>
 
@@ -11,7 +11,7 @@
                 </div>
                 <div class="ml-2 text-sm">
                     <label for="public" class="font-medium text-gray-900 dark:text-gray-300">{{ $t("Public account") }}</label>
-                    <p class="text-xs font-normal text-gray-500 dark:text-gray-300">{{ $t("Check if non-subscribers can access your photos") }}</p>
+                    <p class="text-xs font-normal text-gray-500 dark:text-gray-400">{{ $t("Check if non-subscribers can access your photos") }}</p>
                 </div>
 
                 <div id="loading" role="status" class="hidden pl-4 pt-2">
@@ -21,11 +21,11 @@
             </div>
         </div>
 
-        <div class="w-full md:w-1/3 p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+        <div class="w-full md:w-1/3 p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-zinc-800 dark:border-zinc-700">
             <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ $t("Data") }}</h5>
             <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{{ $t("Get your data, or delete your account.") }}</p>
 
-            <button @click="showModal()" class="my-4 text-sm w-full py-2 bg-red-50 dark:bg-opacity-0 dark:border-none outline-none border border-red-100 rounded text-red-500 dark:text-white font-medium hover:bg-red-400 dark:hover:bg-red-500 hover:text-white transition-colors duration-200">
+            <button @click="showModal()" class="my-4 text-sm w-full py-2 bg-red-50 dark:bg-red-400 dark:border-none outline-none border border-red-100 rounded text-red-500 dark:text-white font-medium hover:bg-red-400 dark:hover:bg-red-500 hover:text-white transition-colors duration-200">
                 {{ $t("Delete account") }}
             </button>
         </div>
@@ -83,7 +83,7 @@
         },
 
         watch: {
-            public(newBool, oldBool) {
+            public(newBool, _) {
                 document.getElementById("loading").classList.remove("hidden");
 
                 fetch(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/users/@me`, {
@@ -117,7 +117,7 @@
 
             delete_account() {
                 fetch(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/account/deletion`, {
-                    method: "PATCH",
+                    method: "DELETE",
                     headers: {
                         "Authorization": useCookie("token").value
                     }

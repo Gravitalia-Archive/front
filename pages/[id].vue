@@ -11,7 +11,7 @@
                         <h1 class="text-xl font-light">{{ exists ? user?.username || "Unknown account" : "Unknown account" }}</h1>
                         <span class="pl-4"></span><button v-if="user && user?.vanity !== vanity && exists && !gv_user?.followed_by_viewer" id="subscriber" @click="relation('subscriber')" class="w-46 text-white bg-blue-600 dark:bg-blue-700 p-1.5 text-xs rounded-md font-semibold">{{ $t("Subscribe") }}</button>
                         <button v-else-if="user && user?.vanity !== vanity && exists && gv_user?.followed_by_viewer" id="subscriber" @click="relation('subscriber')" class="w-46 bg-gray-200 dark:bg-gray-400 p-1.5 text-dark text-xs rounded-md font-semibold">{{ $t("Unsubscribe") }}</button>
-                        <NuxtLink prefetch to="/parameters" v-else-if="user && exists" class="cursor-pointer w-46 bg-gray-200 dark:bg-gray-400 p-1.5 text-dark text-xs rounded-md font-semibold">{{ $t("Parameters") }}</NuxtLink>
+                        <NuxtLink prefetch to="/parameters" v-else-if="user && exists" class="cursor-pointer w-46 bg-gray-200 dark:bg-zinc-500 p-1.5 text-dark text-xs rounded-md font-semibold">{{ $t("Parameters") }}</NuxtLink>
                         <div v-if="user && me && vanity !== user?.vanity && exists" class="flex">
                             <button type="button" aria-label="Action menu" class="z-50 pl-4" @click="showMenu()">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7 cursor-pointer">
@@ -103,6 +103,9 @@ const { data: user } = useCookie("token")?.value ? await useFetch(`${useRuntimeC
 
 if(user._value?.username) {
     useHead({
+        htmlAttrs: {
+            lang: useI18n().locale
+        },
         meta: [
             {
                 property: "og:title",
@@ -138,6 +141,9 @@ if(user._value?.username) {
     });
 } else {
     useHead({
+        htmlAttrs: {
+            lang: useI18n().locale
+        },
         meta: [
             {
                 name: "description",

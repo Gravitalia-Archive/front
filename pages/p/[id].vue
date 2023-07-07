@@ -8,7 +8,7 @@
                         v-for="image in post.hash.length"
                         :id="image"
                         :src="post?.hash ? runtimeConfig?.CDN_URL+'/t_post/'+post.hash[image-1]+'.webp' : ''"
-                        :class="image === 1 ? 'max-h-[32rem]' : 'hidden max-h-[32rem]'"
+                        :class="image === 1 ? 'max-h-[36rem] w-max' : 'hidden max-h-[32rem]'"
                         alt=""
                         crossorigin="anonymous"
                         loading="eager"
@@ -67,7 +67,7 @@
 
                             <div class="flex-col">
                                 <NuxtLink :to="'/'+post?.author" prefetch class="pt-1 pl-2 font-semibold text-sm">{{ post?.author || "Loading..." }}</NuxtLink>
-                                <p class="pl-2 w-full text-sm text-gray-600 dark:text-white">{{ post?.text }}</p>
+                                <p class="pl-2 w-full text-sm text-gray-600 dark:text-white max-w-sm">{{ post?.text }}</p>
                             </div>
                         </div>
 
@@ -79,7 +79,7 @@
                             <div v-for="comment in [...post?.comments, ...comments]" class="pt-1 pl-4 flex">
                                 <NuxtLink :to="'/'+comment.user" prefetch class="font-semibold text-sm">{{ comment.user }}</NuxtLink>
 
-                                <p class="pl-1 text-sm">
+                                <p class="pl-1 text-sm max-w-xs">
                                     {{ comment.text }}
                                 </p>
 
@@ -98,7 +98,7 @@
                             </div>
                             
                             <div class="flex">
-                                <input v-model="new_comment" type="text" class="mt-2.5 px-2 w-80 py-1 border-none rounded text-sm dark:bg-zinc-800 dark:placeholder-white" placeholder="Type your message..." maxlength="250" />
+                                <input v-model="new_comment" type="text" class="mt-2.5 px-2 w-4/5 xl:w-80 py-1 border-none rounded text-sm dark:bg-zinc-800 dark:placeholder-white" placeholder="Type your message..." maxlength="250" />
                                 <button @click="addComment()" type="button" class="mx-4 pt-2 font-bold text-sm text-purple-500 disabled:text-purple-500/50 disabled:cursor-not-allowed" v-bind:disabled="new_comment === '' || !me?.vanity">
                                     {{ $t("Publish") }}
                                 </button>
@@ -133,6 +133,9 @@ const { data: user } = await useFetch(`${runtimeConfig?.ACCOUNT_API_URL || "http
 });
 
 useHead({
+    htmlAttrs: {
+        lang: useI18n().locale
+    },
     meta: [
         {
             name: "description",
