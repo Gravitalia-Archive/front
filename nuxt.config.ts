@@ -9,7 +9,7 @@ export default defineNuxtConfig({
             },
             charset: "utf-8",
             viewport: "width=device-width,initial-scale=1",
-            //title: "Gravitalia",
+            title: "Gravitalia",
             meta: [
                 { property: "og:type", content: "website" },
                 { property: "og:site_name", content: "Gravitalia" },
@@ -36,7 +36,7 @@ export default defineNuxtConfig({
         ["@nuxtjs/i18n", {
             defaultLocale: "en",
             strategy: "no_prefix",
-            lazy: true,
+            lazy: false,
             langDir: "lang",
             detectBrowserLanguage: {
                 useCookie: true,
@@ -85,12 +85,20 @@ export default defineNuxtConfig({
     hooks: {
         "build:before": async () => {
             const myHeaders = new Headers();
-            myHeaders.append("Authorization", "")
+            myHeaders.append("Authorization", "uRVbGkklDIXtvFMs0MgZkQ2WQZLJePo8eSAx0kiEYnlKM9E1vaRwOsXpPn92")
 
             let xml: string = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd
+    http://www.w3.org/1999/xhtml http://www.w3.org/2002/08/xhtml/xhtml1-strict.xsd"
+    xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+    xmlns:xhtml="http://www.w3.org/1999/xhtml"   
+>
 <url>
     <loc>https://www.gravitalia.com/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.gravitalia.com/" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.gravitalia.com/" />
 </url>
 <url>
     <loc>https://www.gravitalia.com/explore</loc>
