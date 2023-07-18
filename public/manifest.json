@@ -1,0 +1,43 @@
+{
+    "name": "Gravitalia",
+    "short_name": "Gravitalia",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "background_color": "#332b43",
+    "theme_color": "#332b43",
+    "description": "Let us connect you!",
+    "icons": [
+        {
+            "src": "favicon.webp",
+            "sizes": "96x96",
+            "type": "image/webp"
+        },
+        {
+            "src": "/favicon.png",
+            "type": "image/png",
+            "sizes": "256x256",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/scaled.png",
+            "type": "image/png",
+            "sizes": "962x962"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Gravitalia",
+            "short_name": "Gravitalia",
+            "description": "Let us connect you!",
+            "url": "/",
+            "icons": [
+                {
+                    "src": "/favicon.png",
+                    "sizes": "256x256"
+                }
+            ]
+        }
+    ],
+    "related_applications": []
+}

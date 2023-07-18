@@ -78,5 +78,21 @@
     "Publish": "Publish",
     "Oops! An error occurred while uploading, please try again later!": "Oops! An error occurred while uploading, please try again later!",
     "Be the first to comment!": "Be the first to comment!",
-    "Like": "Like"
+    "Like": "Like",
+    "Share": "Share",
+    "Delete post": "Delete post",
+    "Download my data": "Download my data",
+    "Your data can only be downloaded every 48 hours.": "Your data can only be downloaded every 48 hours.",
+    "Subscriptions": "Subscriptions",
+    "Followers": "Followers",
+    "View subscription requests": "View subscription requests",
+    "No notification for the moment!": "No notification for the moment!",
+    "requested to follow you": "requested to follow you",
+    "has accepted your request": "has accepted your request",
+    "Subscription requests": "Subscription requests",
+    "There's nothing here!": "There's nothing here!",
+    "liked your publication": "liked your publication",
+    "commented on your publication": "commented on your publication",
+    "mentioned you": "mentioned you",
+    "Subscription requested": "Subscription requested"
 }

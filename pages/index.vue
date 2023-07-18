@@ -2,7 +2,7 @@
     <div>
         <Navbar @userData="callback" />
         <div v-if="user">
-            <div v-if="recommendation?.length === 0">
+            <div v-if="recommendation === null">
                 <div class="flex flex-col items-center justify-center mb-24">
                     <div role="status" class="w-11/12 lg:w-1/3 h-1/4 border border-gray-200 dark:border-gray-700 rounded shadow animate-pulse py-5 px-8">
                         <div class="flex items-center mt-4 space-x-3">
@@ -51,11 +51,11 @@
                     </div>
                 </div>
             </div>
-            <div v-else-if="!recommendation">
+            <div v-else-if="recommendation.length === 0">
                 <div class="h-[73vh] md:h-[75vh] xl:h-[80vh] flex flex-col items-center justify-center">
                     <img alt="" src="/be_first.svg" width="400" />
                     <p class="pt-8 text-2xl font-bold">{{ $t("You are the first one here! And there is nothing...") }}</p>
-                    <a href="/upload"><p class="text-md font-medium text-blue-600 hover:text-blue-800">{{ $t("Share your first adventure here") }}</p></a>
+                    <NuxtLink to="/upload"><p class="text-md font-medium text-blue-600 dark:text-blue-500 hover:text-blue-800">{{ $t("Share your first adventure here") }}</p></NuxtLink>
                 </div>
                 <br /><br />
             </div>
@@ -152,7 +152,7 @@
                 </div>
             </div>
         </div>
-        <Footer />
+        <Footer :absolute="user && (recommendation == null || recommendation.length < 2)" />
     </div>
 </template>
 
@@ -183,7 +183,7 @@ useHead({
         data() {
             return {
                 user: null,
-                recommendation: [],
+                recommendation: null,
                 runtimeConfig: useRuntimeConfig().public
             }
         },
@@ -191,14 +191,12 @@ useHead({
         async mounted() {
             const token = useCookie("token");
             if(token.value) {
-                setTimeout(async() => {
-                    this.recommendation = await fetch(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/recommendation/for_you_feed`, {
-                        headers: {
-                            "Authorization": token.value
-                        }
-                    })
-                    .then(res => res.json());
-                }, 400)
+                this.recommendation = await fetch(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/recommendation/for_you_feed`, {
+                    headers: {
+                        "Authorization": token.value
+                    }
+                })
+                .then(res => res.json());
 
                 if(this.recommendation?.error) {
                     token.value = null;

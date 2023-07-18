@@ -25,7 +25,13 @@
             <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ $t("Data") }}</h5>
             <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{{ $t("Get your data, or delete your account.") }}</p>
 
-            <button @click="showModal()" class="my-4 text-sm w-full py-2 bg-red-50 dark:bg-red-400 dark:border-none outline-none border border-red-100 rounded text-red-500 dark:text-white font-medium hover:bg-red-400 dark:hover:bg-red-500 hover:text-white transition-colors duration-200">
+            <button @click="downloadData()" class="mt-4 text-sm w-full py-2 bg-violet-100 dark:bg-violet-400 dark:border-none outline-none border border-violet-100 rounded text-violet-500 dark:text-white font-medium hover:bg-violet-400 dark:hover:bg-violet-500 hover:text-white transition-colors duration-200">
+                {{ $t("Download my data") }}
+            </button>
+
+            <span class="text-xs">{{ $t("Your data can only be downloaded every 48 hours.") }}</span>
+
+            <button @click="showModal()" class="mt-4 text-sm w-full py-2 bg-red-50 dark:bg-red-400 dark:border-none outline-none border border-red-100 rounded text-red-500 dark:text-white font-medium hover:bg-red-400 dark:hover:bg-red-500 hover:text-white transition-colors duration-200">
                 {{ $t("Delete account") }}
             </button>
         </div>
@@ -36,7 +42,7 @@
 			<div class="py-4 text-left px-6">
                 <div class="flex justify-between items-center">
 					<p class="text-2xl font-bold">{{ $t("Do not left us! 😔") }}</p>
-					<div class="cursor-pointer z-50" @click="close_modal()">
+					<div class="cursor-pointer z-50" @click="closeModal()">
 						<svg class="fill-current text-black dark:text-white" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
 							<path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"></path>
 						</svg>
@@ -49,8 +55,8 @@
                     <p class="text-sm text-gray-600">{{ $t("This action may be useful if you want to start again your account from scratch!") }}</p>
 				</div>
 				<div class="flex justify-end pt-2 space-x-4">
-                    <button @click="delete_account()" class="px-4 bg-red-50 dark:bg-opacity-0 dark:border-none outline-none border border-red-100 rounded text-red-500 dark:text-white font-medium hover:bg-red-400 dark:hover:bg-red-500 hover:text-white transition-colors duration-200">{{ $t("Supprimer") }}</button>
-					<button @click="close_modal()" class="focus:outline-none px-4 bg-none duration-300 p-3 rounded text-black hover:bg-gray-200 dark:text-white hover:dark:text-gray-200 hover:dark:bg-gray-800">{{ $t("Cancel") }}</button>
+                    <button @click="deleteAccount()" class="px-4 bg-red-50 dark:bg-opacity-0 dark:border-none outline-none border border-red-100 rounded text-red-500 dark:text-white font-medium hover:bg-red-400 dark:hover:bg-red-500 hover:text-white transition-colors duration-200">{{ $t("Supprimer") }}</button>
+					<button @click="closeModal()" class="focus:outline-none px-4 bg-none duration-300 p-3 rounded text-black hover:bg-gray-200 dark:text-white hover:dark:text-gray-200 hover:dark:bg-gray-800">{{ $t("Cancel") }}</button>
 				</div>
 			</div>
 		</div>
@@ -63,7 +69,7 @@
             return {
                 user: null,
                 runtimeConfig: useRuntimeConfig().public,
-                public: true
+                public: null
             }
         },
 
@@ -76,14 +82,16 @@
                     }
                 })
                 .then(res => res.json());
-                this.public = this.user?.public || true;
+                this.public = this.user.public;
             }
 
             if(!this.user) return await navigateTo(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/callback`, { external: true });
         },
 
         watch: {
-            public(newBool, _) {
+            public(newBool, oldBool) {
+                if(oldBool === null) return;
+
                 document.getElementById("loading").classList.remove("hidden");
 
                 fetch(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/users/@me`, {
@@ -111,22 +119,42 @@
                 document.getElementById("delete_modal").classList.remove("hidden");
             },
 
-            close_modal() {
+            closeModal() {
                 document.getElementById("delete_modal").classList.add("hidden");
             },
 
-            delete_account() {
+            deleteAccount() {
                 fetch(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/account/deletion`, {
                     method: "DELETE",
                     headers: {
                         "Authorization": useCookie("token").value
                     }
                 }).then(res => res.json())
-                .then(async (res) => {
+                .then(res => {
                     if(!res.error) {
                         document.cookie = "token=gv;expires=Thu, 01 Jan 1970 00:00:01 GMT;";
-                        return await navigateTo("/");
+                        return window.location.href = "/";
                     }
+                });
+            },
+
+            downloadData() {
+                fetch("https://api.gravitalia.com/account/data", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": useCookie("token").value
+                    }
+                })
+                .then(response => response.blob())
+                .then(blob => {
+                    const url = URL.createObjectURL(blob);
+                    
+                    const link = document.createElement("a");
+                    link.href = url;
+                    link.download = "data.zip";
+                    link.click();
+
+                    URL.revokeObjectURL(url);
                 });
             }
         }

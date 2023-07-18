@@ -78,5 +78,21 @@
     "Publish": "Publier",
     "Oops! An error occurred while uploading, please try again later!": "Oups ! Une erreur s'est produite lors de la mise en ligne, réessayez plus tard !",
     "Soyez le premier à commenter !": "Soyez le premier à commenter !",
-    "Like": "J'aime"
+    "Like": "J'aime",
+    "Share": "Partager",
+    "Delete post": "Supprimer la publication",
+    "Download my data": "Télécharger mes données",
+    "Your data can only be downloaded every 48 hours.": "Vos données ne sont téléchargeables que toutes les 48 heures.",
+    "Subscriptions": "Abonnements",
+    "Followers": "Abonnés",
+    "View subscription requests": "Voir les demandes d'abonnement",
+    "No notification for the moment!": "Pas de notification pour le moment !",
+    "requested to follow you": "a demandé à vous suivre",
+    "has accepted your request": "a accepté votre demande",
+    "Subscription requests": "Demandes d'abonnement",
+    "There's nothing here!": "J'entends le vent... il n'y a rien ici ! 💨",
+    "liked your publication": "a aimé votre publication",
+    "commented on your publication": "a commenté sur votre publication",
+    "mentioned you": "vous a mentionné",
+    "Subscription requested": "Abonnement demandé"
 }

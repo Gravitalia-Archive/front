@@ -2,58 +2,65 @@
     <Navbar @userData="callback" />
     <div>
         <div class="flex justify-center">
-        <div class="flex h-fit gap-10 px-2 md:w-[22%]">
-            <img class="rounded-full w-32 h-32" :src="user?.avatar && exists ? runtimeConfig?.CDN_URL+'/t_avatar/'+user.avatar+'.webp' : `/avatar/${exists ? user?.username[0]?.toUpperCase()||'U' : 'U'}.webp`" draggable="false" alt="" fetchpriority="high" />
+            <div class="flex h-fit gap-4 xl:gap-6 px-2">
+                <img class="rounded-full w-24 h-24 xl:w-32 xl:h-32" :src="user?.avatar && exists ? runtimeConfig?.CDN_URL+'/t_avatar/'+user.avatar+'.webp' : `/avatar/${exists ? user?.username[0]?.toUpperCase()||'U' : 'U'}.webp`" draggable="false" alt="" fetchpriority="high" />
 
-            <div class="grid gap-3 w-full">
-                <div>
-                    <div class="flex">
-                        <h1 class="text-xl font-light">{{ exists ? user?.username || "Unknown account" : "Unknown account" }}</h1>
-                        <span class="pl-4"></span><button v-if="user && user?.vanity !== vanity && exists && !gv_user?.followed_by_viewer" id="subscriber" @click="relation('subscriber')" class="w-46 text-white bg-blue-600 dark:bg-blue-700 p-1.5 text-xs rounded-md font-semibold">{{ $t("Subscribe") }}</button>
-                        <button v-else-if="user && user?.vanity !== vanity && exists && gv_user?.followed_by_viewer" id="subscriber" @click="relation('subscriber')" class="w-46 bg-gray-200 dark:bg-gray-400 p-1.5 text-dark text-xs rounded-md font-semibold">{{ $t("Unsubscribe") }}</button>
-                        <NuxtLink prefetch to="/parameters" v-else-if="user && exists" class="cursor-pointer w-46 bg-gray-200 dark:bg-zinc-500 p-1.5 text-dark text-xs rounded-md font-semibold">{{ $t("Parameters") }}</NuxtLink>
-                        <div v-if="user && me && vanity !== user?.vanity && exists" class="flex">
-                            <button type="button" aria-label="Action menu" class="z-50 pl-4" @click="showMenu()">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7 cursor-pointer">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
-                                </svg>
-                            </button>
-                            <div class="pt-8 pl-14 absolute">
-                                <div id="show-menu" class="hidden z-10 origin-top-right absolute right-0 mt-2 w-52 rounded-md shadow-lg py-1 bg-slate-100 dark:bg-zinc-800 dark:border dark:border-zinc-700 ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical">
-                                    <svg class="absolute bottom-full right-4" width="22" height="13" viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg">
-                                        <polygon class="fill-slate-100 dark:fill-zinc-800 dark:stroke-zinc-700" points="15, 0 30, 20 0, 20"/>
+                <div class="grid gap-2 w-full">
+                    <div>
+                        <div class="flex">
+                            <h1 class="text-xl font-light">{{ exists ? user?.username || "Unknown account" : "Unknown account" }}</h1>
+                            <span class="pl-4"></span>
+                            <button v-if="user && user?.vanity !== vanity && exists && !gv_user?.followed_by_viewer" id="subscriber" @click="relation('subscriber')" class="w-46 text-white bg-blue-600 dark:bg-blue-700 p-1.5 text-xs rounded-md font-semibold">{{ $t("Subscribe") }}</button>
+                            <button v-else-if="user && user?.vanity !== vanity && exists && requested_subscription" id="subscriber" @click="relation('subscriber')" class="w-46 bg-gray-200 dark:bg-gray-400 p-1.5 text-dark text-xs rounded-md font-semibold">{{ $t("Subscription requested") }}</button>
+                            <button v-else-if="user && user?.vanity !== vanity && exists && gv_user?.followed_by_viewer" id="subscriber" @click="relation('subscriber')" class="w-46 bg-gray-200 dark:bg-gray-400 p-1.5 text-dark text-xs rounded-md font-semibold">{{ $t("Unsubscribe") }}</button>
+                            <NuxtLink prefetch to="/parameters" v-else-if="user && exists" class="cursor-pointer w-46 bg-gray-200 dark:bg-zinc-500 p-1.5 text-dark text-xs rounded-md font-semibold">{{ $t("Parameters") }}</NuxtLink>
+                            <div v-if="user && me && vanity !== user?.vanity && exists" class="flex">
+                                <button type="button" aria-label="Action menu" class="z-50 pl-4" @click="showMenu()">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7 cursor-pointer">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
                                     </svg>
-                                    <!-- <div class="w-full cursor-pointer"><span class="block px-4 py-2 text-sm font-semibold text-red-600 dark:text-white">{{ $t("Global block") }}</span></div> -->
-                                    <div class="w-full cursor-pointer" @click="relation('block')"><span id="block" class="block px-4 py-2 text-sm font-semibold text-red-600 dark:text-white">{{ blocked ? $t("Platform unblock") : $t("Platform block") }}</span></div>
-                                    <div class="w-full cursor-pointer" @click="showModal()"><span class="block px-4 py-2 text-sm text-gray-700 dark:text-white">{{ $t("Report") }}</span></div>
+                                </button>
+                                <div class="pt-8 pl-14 absolute">
+                                    <div id="show-menu" class="hidden z-10 origin-top-right absolute right-0 mt-2 w-52 rounded-md shadow-lg py-1 bg-slate-100 dark:bg-zinc-800 dark:border dark:border-zinc-700 ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical">
+                                        <svg class="absolute bottom-full right-4" width="22" height="13" viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg">
+                                            <polygon class="fill-slate-100 dark:fill-zinc-800 dark:stroke-zinc-700" points="15, 0 30, 20 0, 20"/>
+                                        </svg>
+                                        <!-- <div class="w-full cursor-pointer"><span class="block px-4 py-2 text-sm font-semibold text-red-600 dark:text-red-400">{{ $t("Global block") }}</span></div> -->
+                                        <div class="w-full cursor-pointer" @click="relation('block')"><span id="block" class="block px-4 py-2 text-sm font-semibold text-red-600 dark:text-red-400">{{ blocked ? $t("Platform unblock") : $t("Platform block") }}</span></div>
+                                        <div class="w-full cursor-pointer" @click="showModal()"><span class="block px-4 py-2 text-sm text-gray-700 dark:text-white">{{ $t("Report") }}</span></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <div class="flex justify-between space-x-2">
+                            <p class="text-sm"><b>{{ gv_user?.posts?.length||0 }}</b> {{ gv_user?.posts?.length||0 >= 2 ? $t("photos") : $t("photo") }}</p>
+
+                            <p v-if="me && me.vanity === user.vanity" class="text-sm cursor-pointer" @click="openSubscriberModal = !openSubscriberModal"><b id="nb_followers">{{ gv_user?.followers||0 }}</b> {{ gv_user?.followers||0 >= 2 ? $t("followers") : $t("follower") }}</p>
+                            <p v-else class="text-sm"><b id="nb_followers">{{ gv_user?.followers||0 }}</b> {{ gv_user?.followers||0 >= 2 ? $t("followers") : $t("follower") }}</p>
+
+                            <p v-if="me && me.vanity === user.vanity" class="text-sm cursor-pointer" @click="openSubscriptionModal = !openSubscriptionModal"><b>{{ gv_user?.following||0 }}</b> {{ gv_user?.following||0 >= 2 ? $t("subscriptions") : $t("subscription") }}</p>
+                            <p v-else class="text-sm"><b>{{ gv_user?.following||0 }}</b> {{ gv_user?.following||0 >= 2 ? $t("subscriptions") : $t("subscription") }}</p>
+                        </div>
                     </div>
-                    <div class="flex justify-between">
-                        <p class="text-sm"><b>{{ gv_user?.posts?.length||0 }}</b> {{ gv_user?.posts?.length||0 >= 2 ? $t("photos") : $t("photo") }}</p>
-                        <p class="text-sm"><b id="nb_followers">{{ gv_user?.followers||0 }}</b> {{ gv_user?.followers||0 >= 2 ? $t("followers") : $t("follower") }}</p>
-                        <p class="text-sm"><b>{{ gv_user?.following||0 }}</b> {{ gv_user?.following||0 >= 2 ? $t("subscriptions") : $t("subscription") }}</p>
-                    </div>
+                    <p><b class="pb-6">{{ exists ? user?.vanity : ""  }}</b><br /><span class="text-gray-700 text-sm">{{ exists ? user?.bio : "" }}</span></p>
                 </div>
-                <p><b class="pb-6">{{ exists ? user?.vanity : ""  }}</b><br /><span class="text-gray-700 text-sm">{{ exists ? user?.bio : "" }}</span></p>
             </div>
         </div>
-            </div>
+
             <hr class="my-8 h-px w-3/4 xl:w-2/3 2xl:w-[51.9%] bg-gray-200 dark:bg-gray-700 border-0 mx-auto">
             <div class="flex justify-center">
-                <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 space-x-0 xl:space-x-4 space-y-4 xl:space-y-0">
-                    <div v-for="post in gv_user?.posts||[]" class="pt-4 flex justify-end items-center">
-                        <NuxtLink prefetch :to="'/p/'+post.id" class="flex justify-start -space-x-80">
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-3 px-5">
+                    <div v-for="(post, index) in gv_user?.posts || []" class="pt-4 flex justify-end items-center">
+                        <NuxtLink prefetch :to="'/p/'+post.id" :aria-label="'Click here to open image number ' + post.id" class="flex justify-start -space-x-80">
 							<img
                                 :onmouseenter="'document.getElementById(\''+post.id+'\').classList.remove(\'hidden\')'"
                                 class="w-80 h-80"
                                 :src="runtimeConfig?.CDN_URL+'/t_media_lib_thumb/'+post.hash[0]+'.webp'"
                                 alt=""
                                 crossorigin="anonymous"
-                                loading="lazy"
+                                :loading="index >= 6 ? 'lazy' : 'eager'"
                                 decoding="async"
-                                fetchpriority="low"
+                                :fetchpriority="index >= 6 ? 'low' : 'high'"
                                 referrerpolicy="no-referrer"
                             />
 
@@ -87,10 +94,12 @@
             </div>
             <div v-else>
                 <br /><br />
-                <Footer />
+                <Footer :absolute="gv_user === null || gv_user.posts.length < 4" />
             </div>
     </div>
-
+    
+    <List @close="openSubscriptionModal = false" v-if="me && me.vanity === user.vanity" name="subscription" :open="openSubscriptionModal" />
+    <List @close="openSubscriberModal = false" v-if="me && me.vanity === user.vanity" name="subscriber" :open="openSubscriberModal" />
     <SignalChoice />
 </template>
 
@@ -171,7 +180,10 @@ if(user._value?.username) {
                 me: null,
                 gv_user: null,
                 runtimeConfig: useRuntimeConfig().public,
-                blocked: false
+                blocked: false,
+                requested_subscription: false,
+                openSubscriptionModal: false,
+                openSubscriberModal: false
             }
         },
 
@@ -189,14 +201,28 @@ if(user._value?.username) {
                     this.gv_user = res;
                 }
             });
+        },
 
-            this.blocked = useCookie("token").value ? await fetch(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/relation/block?target=${useRoute().params.id}`, {
-                headers: {
-                    "Authorization": useCookie("token").value
-                }
-            })
-            .then(res => res.json())
-            .then(res => res.message === "existent") : false;
+        watch: {
+            async vanity(newVanity, _) {
+                const userId = useRoute().params.id;
+
+                this.requested_subscription = useCookie("token").value && newVanity !== userId ? await fetch(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/relation/request?target=${userId}`, {
+                    headers: {
+                        "Authorization": useCookie("token").value
+                    }
+                })
+                .then(res => res.json())
+                .then(res => res.message === "existent") : false;
+
+                this.blocked = useCookie("token").value && newVanity !== userId ? await fetch(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/relation/block?target=${userId}`, {
+                    headers: {
+                        "Authorization": useCookie("token").value
+                    }
+                })
+                .then(res => res.json())
+                .then(res => res.message === "existent") : false;
+            }
         },
 
         methods: {
@@ -242,6 +268,8 @@ if(user._value?.username) {
                             const nb_followers = document.getElementById("nb_followers");
                             nb_followers.innerText = parseInt(nb_followers.innerText, 10) + 1;
                         }
+                    } else if(res.message === "Request added") {
+                        requested_subscription = true;
                     } else {
                         if(type === "block") {
                             document.getElementById(type).innerText = this.$t("Platform block");

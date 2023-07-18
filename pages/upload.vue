@@ -6,8 +6,8 @@
     <Navbar @userData="callback" />
     <div class="flex h-[73vh] md:h-[75vh] xl:h-[80vh]">
         <div class="relative m-auto">
-            <div class="flex flex-col lg:flex-row h-max w-full rounded-r border">
-                    <img v-for="id in max_photo" :id="id" class="h-[32rem] hidden" src="" alt="" />
+            <div class="flex flex-col lg:flex-row h-max w-full rounded-r border dark:border-zinc-700">
+                    <img v-for="id in max_photo" :id="id" class="max-h-[36rem] 4xl:max-h-[42rem] hidden" src="" alt="" />
 
                     <div class="flex justify-center space-x-4">
                         <button @click="next()" id="next_img" type="button" class="hidden absolute w-10 h-10 top-64 inset-y-0 right-4 xl:right-96 rounded-full bg-gray-200/70 flex justify-center items-center">
@@ -26,7 +26,7 @@
                     </div>
 
                 <div id="drop" class="flex">
-                    <label for="dropzone" class="flex flex-col items-center justify-center w-full lg:w-96 h-[32rem] border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+                    <label for="dropzone" class="flex flex-col items-center justify-center w-full md:w-[28rem] h-[36rem] 4xl:h-[42rem] border-2 border-gray-300 border-dashed rounded-r cursor-pointer bg-gray-50 dark:hover:bg-zinc-800 dark:bg-zinc-800 hover:bg-gray-100 dark:border-zinc-700 dark:hover:bg-zinc-900">
                         <div class="flex flex-col items-center justify-center">
                             <svg aria-hidden="true" class="w-10 h-10  text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
                             <p class=" text-sm text-gray-500 dark:text-gray-400 font-semibold">{{ $t("Click to upload or drag and drop") }}</p>
@@ -40,7 +40,7 @@
                     <div class="flex py-2">
                         <img :src='user?.avatar ? runtimeConfig.CDN_URL+"/t_profile/"+user.avatar+".webp"  : "/avatar/"+(user?.username.match("[A-z]") ? user.username.match("[A-z]")[0].toUpperCase() : "A")+".webp"' class="rounded-full h-8 w-8" alt="" />
                         <NuxtLink :to="'/'+user?.vanity" prefetch class="pt-1 pl-2 font-semibold text-sm">{{ user?.vanity }}</NuxtLink>
-                        <p class="text-sm text-gray-500 pt-1 pl-1.5">• {{ $t("now") }}</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-300 pt-1 pl-1.5">• {{ $t("now") }}</p>
 
                         <span class="pl-16 lg:pl-40 cursor-pointer">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7 cursor-pointer">
@@ -49,11 +49,11 @@
                         </span>
                     </div>
 
-                    <hr />
+                    <hr class="h-px bg-gray-200 border-0 dark:bg-zinc-600" />
 
-                    <textarea v-model="description" :placeholder='$t("Add a legend, in 2,000 characters")' maxlength="2000" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
+                    <textarea v-model="description" :placeholder='$t("Add a legend, in 2,000 characters")' maxlength="2000" rows="4" class="mt-2 block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-zinc-800 dark:border-zinc-800 dark:placeholder-zinc-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
 
-                    <button type="button" id="publish_btn" @click="publish()" disabled class="flex justify-center items-center mt-12 lg:mt-72 h-11 w-full py-2 bg-green-500 disabled:bg-green-500/80 disabled:cursor-not-allowed hover:bg-green-700 transition-colors duration-300 text-white rounded-md">
+                    <button type="button" id="publish_btn" @click="publish()" disabled class="flex justify-center items-center mt-12 lg:mt-[22rem] h-11 w-full py-2 bg-green-500 disabled:bg-green-500/50 disabled:cursor-not-allowed hover:bg-green-700 disabled:hover:bg-green-500/50 transition-colors duration-300 text-white rounded-md">
                         {{ $t("Publish") }}
                     </button>
                 </div>

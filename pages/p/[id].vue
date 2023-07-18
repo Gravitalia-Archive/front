@@ -8,7 +8,7 @@
                         v-for="image in post.hash.length"
                         :id="image"
                         :src="post?.hash ? runtimeConfig?.CDN_URL+'/t_post/'+post.hash[image-1]+'.webp' : ''"
-                        :class="image === 1 ? 'max-h-[36rem] w-max' : 'hidden max-h-[32rem]'"
+                        :class="image === 1 ? 'max-h-[36rem] 4xl:max-h-[42rem] w-max' : 'hidden max-h-[36rem] 4xl:max-h-[42rem] w-max'"
                         alt=""
                         crossorigin="anonymous"
                         loading="eager"
@@ -37,23 +37,24 @@
 
                     <div class="pt-2 flex flex-col">
                         <div class="px-4 flex py-2">
-                            <img :src='user?.avatar ? runtimeConfig.CDN_URL+"/t_profile/"+user.avatar+".webp" : "/avatar/"+(user?.username?.match("[A-z]") ? user.username.match("[A-z]")[0].toUpperCase() : "A")+".webp"' class="rounded-full h-8 w-8" alt="" />
+                            <img :src='user?.avatar ? runtimeConfig.CDN_URL+"/t_profile/"+user.avatar+".webp" : "/avatar/"+(user?.username?.match("[A-z]") ? user.username.match("[A-z]")[0].toUpperCase() : "A")+".webp"' class="rounded-full h-8 w-8" :aria-label="post?.author + '\'s avatar'" alt="" />
                             <NuxtLink :to="'/'+post?.author" prefetch class="pt-1 pl-2 font-semibold text-sm">{{ post?.author || "Loading..." }}</NuxtLink>
                             <p class="text-sm text-gray-500 dark:text-gray-200 pt-1 pl-1.5">• {{ post?.id ? timestampToDate(snowflakeToTimestamp(post.id)) : $t("now") }}</p>
 
-                            <button type="button" aria-label="Action menu" class="z-20 pl-16 lg:pl-40" @click="showMenu()">
+                            <button type="button" aria-label="Action menu" class="z-20 pl-20 lg:pl-40" @click="showMenu()">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
                                 </svg>
                             </button>
 
-                            <div id="show-menu" class="hidden pt-8 pl-16 lg:pl-80 absolute">
+                            <div id="show-menu" class="hidden pt-8 pl-80 lg:pl-96 absolute">
                                 <div class="z-10 origin-top-right absolute right-0 mt-2 w-52 rounded-md shadow-lg py-1 bg-slate-100 dark:bg-zinc-800 dark:border dark:border-zinc-700 ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical">
                                     <svg class="absolute bottom-full right-4" width="22" height="13" viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg">
                                         <polygon class="fill-slate-100 dark:fill-zinc-800 dark:stroke-zinc-700" points="15, 0 30, 20 0, 20"/>
                                     </svg>
-                                    <!-- <div class="w-full cursor-pointer" @click="navigator.clipboard.writeText(window.location.href),showMenu()"><span class="block px-4 py-2 text-sm text-gray-700 dark:text-white">{{ $t("Share") }}</span></div> -->
-                                    <div class="w-full cursor-pointer" @click="showModal()"><span class="block px-4 py-2 text-sm font-semibold text-red-600 dark:text-white">{{ $t("Report") }}</span></div>
+                                    <div class="w-full cursor-pointer" @click="copy()"><span class="block px-4 py-2 text-sm text-gray-700 dark:text-white">{{ $t("Share") }}</span></div>
+                                    <div v-if="me?.vanity !== post.author" class="w-full cursor-pointer" @click="showModal()"><span class="block px-4 py-2 text-sm font-semibold text-red-600 dark:text-white">{{ $t("Report") }}</span></div>
+                                    <div v-else-if="me?.vanity === post.author" class="w-full cursor-pointer" @click="deletePost()"><span class="block px-4 py-2 text-sm font-semibold text-red-600 dark:text-red-400">{{ $t("Delete post") }}</span></div>
                                 </div>
                             </div>
                         </div>
@@ -89,7 +90,7 @@
                             </div>
                         </div>
 
-                        <div class="mt-auto w-full border-t dark:border-gray-700 p-2">
+                        <div class="mt-11 lg:mt-auto w-full border-t dark:border-gray-700 p-2">
                             <div @click="relation('like')" class="flex cursor-pointer w-1/4">
                                 <svg id="liked" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" :class="liked_post ? 'text-red-500 fill-red-500 w-6 h-6' : 'w-6 h-6'">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
@@ -363,6 +364,36 @@ function next() {
                         window.location.reload();
                     }
                 });
+            },
+
+            deletePost() {
+                fetch(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/posts/${useRoute().params.id}`, {
+                    method: "DELETE",
+                    headers: {
+                        "Authorization": useCookie("token").value
+                    }
+                })
+                .then(res => res.json())
+                .then(async (res) => {
+                    if(!res.error) {
+                        await navigateTo("/");
+                    }
+                });
+            },
+
+            copy() {
+                const textArea = document.createElement("textarea");
+                textArea.value = `${this.runtimeConfig?.SITE_URL || "https://www.gravitalia.com"}/p/${useRoute().params.id}`;
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+
+                // For mbile
+                textArea.setSelectionRange(0, 99999)
+
+                document.execCommand('copy')
+                document.body.removeChild(textArea);
+                this.showMenu();
             }
         }
     }

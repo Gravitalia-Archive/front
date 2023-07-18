@@ -1,19 +1,19 @@
 {
-  "name": "gravitalia",
+  "name": "nuxt-app",
   "private": true,
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare",
-    "deploy": "npm run build && wrangler publish"
+    "postinstall": "nuxt prepare"
   },
   "devDependencies": {
-    "@nuxtjs/color-mode": "^3.2.0",
-    "@nuxtjs/i18n": "^8.0.0-beta.8",
-    "@nuxtjs/tailwindcss": "^6.6.7",
+    "@nuxt/devtools": "latest",
+    "@nuxtjs/color-mode": "^3.3.0",
+    "@nuxtjs/i18n": "^8.0.0-beta.13",
+    "@nuxtjs/tailwindcss": "^6.8.0",
     "@types/node": "^18",
-    "nuxt": "^3.4.3"
+    "nuxt": "^3.6.3"
   }
 }
