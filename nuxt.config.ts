@@ -21,8 +21,8 @@ export default defineNuxtConfig({
                 { name: "twitter:site", content: "@gravitaliainc" }
             ],
             link: [
-                { rel: "icon", type: "image/webp", href: "favicon.webp" },
-                { rel: "manifest", href: "manifest.json" }
+                { rel: "icon", type: "image/webp", href: "/favicon.webp" },
+                { rel: "manifest", href: "/manifest.json" }
             ],
             script: [
                 { innerHTML: '"serviceWorker"in navigator&&navigator.serviceWorker.register("/sw.js",{scope:"/"});' }
@@ -89,7 +89,7 @@ export default defineNuxtConfig({
     hooks: {
         "build:before": async () => {
             const myHeaders = new Headers();
-            myHeaders.append("Authorization", "TOKEN")
+            myHeaders.append("Authorization", "CODE")
 
             let xml: string = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset
