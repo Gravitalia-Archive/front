@@ -121,6 +121,8 @@ onMounted(() => {
         eventSource.onmessage = function(e) {
             const event = JSON.parse(e.data);
 
+            console.log(event)
+
             if(event.type === "ping") return;
             
             let content;
@@ -148,7 +150,7 @@ onMounted(() => {
 
 
             notification.value.push({
-                url: event.type.includes("post_") ? `/${event.to}` : `/${event.from}`,
+                url: event.type?.includes("post_") ? `/${event.to}` : `/${event.from}`,
                 from: event.from,
                 content
             });
