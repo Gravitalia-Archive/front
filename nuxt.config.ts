@@ -89,7 +89,7 @@ export default defineNuxtConfig({
     hooks: {
         "build:before": async () => {
             const myHeaders = new Headers();
-            myHeaders.append("Authorization", "uRVbGkklDIXtvFMs0MgZkQ2WQZLJePo8eSAx0kiEYnlKM9E1vaRwOsXpPn92")
+            myHeaders.append("Authorization", "CODE")
 
             let xml: string = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset
