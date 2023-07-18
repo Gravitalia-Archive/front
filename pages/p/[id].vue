@@ -41,13 +41,13 @@
                             <NuxtLink :to="'/'+post?.author" prefetch class="pt-1 pl-2 font-semibold text-sm">{{ post?.author || "Loading..." }}</NuxtLink>
                             <p class="text-sm text-gray-500 dark:text-gray-200 pt-1 pl-1.5">• {{ post?.id ? timestampToDate(snowflakeToTimestamp(post.id)) : $t("now") }}</p>
 
-                            <button type="button" aria-label="Action menu" class="z-20 pl-20 lg:pl-40" @click="showMenu()">
+                            <button type="button" aria-label="Action menu" class="z-20 pl-20 lg:pl-40" @click="isMenuShown = !isMenuShown">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
                                 </svg>
                             </button>
 
-                            <div id="show-menu" class="hidden pt-8 pl-80 lg:pl-96 absolute">
+                            <div :class="isMenuShown ? 'pt-8 pl-80 lg:pl-96 absolute' : 'hidden'">
                                 <div class="z-10 origin-top-right absolute right-0 mt-2 w-52 rounded-md shadow-lg py-1 bg-slate-100 dark:bg-zinc-800 dark:border dark:border-zinc-700 ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical">
                                     <svg class="absolute bottom-full right-4" width="22" height="13" viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg">
                                         <polygon class="fill-slate-100 dark:fill-zinc-800 dark:stroke-zinc-700" points="15, 0 30, 20 0, 20"/>
@@ -276,7 +276,8 @@ function next() {
                 runtimeConfig: useRuntimeConfig().public,
                 liked_post: false,
                 new_comment: "",
-                comments: []
+                comments: [],
+                isMenuShown: false
             }
         },
 
@@ -293,14 +294,6 @@ function next() {
         methods: {
             callback(data) {
                 this.me = data;
-            },
-
-            showMenu() {
-                if(document.getElementById('show-menu').classList.value.includes('hidden')) {
-                    document.getElementById('show-menu').classList.remove('hidden');
-                } else {
-                    document.getElementById('show-menu').classList.add('hidden');
-                }
             },
 
             showModal() {
@@ -393,7 +386,8 @@ function next() {
 
                 document.execCommand('copy')
                 document.body.removeChild(textArea);
-                this.showMenu();
+                
+                this.isMenuShown = !this.isMenuShown;
             }
         }
     }

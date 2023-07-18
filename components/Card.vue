@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col items-center justify-center mb-10">
+    <div @mouseover="setAsViewed()" class="flex flex-col items-center justify-center mb-10">
         <div class="w-11/12 lg:w-1/3 h-1/4 xl:shadow border border-gray-200 dark:border-zinc-800 rounded py-5 px-8">
             <div class="flex items-center mt-4">
                 <img :src='user?.avatar ? runtimeConfig.CDN_URL+"/t_profile/"+user.avatar+".webp" : "/avatar/"+(user?.username?.match("[A-z]") ? user.username.match("[A-z]")[0].toUpperCase() : "A")+".webp"' class="rounded-full h-8 w-8" alt="" fetchpriority="low" />
@@ -110,6 +110,19 @@
 
                 document.execCommand('copy')
                 document.body.removeChild(textArea);
+            },
+
+            setAsViewed() {
+                fetch(`${runtimeConfig?.API_URL || "https://api.gravitalia.com"}/relation/view`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": useCookie("token").value
+                    },
+                    body: JSON.stringify({
+                        id: useRoute().params.id
+                    })
+                });
             }
         }
     }
