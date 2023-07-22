@@ -88,11 +88,18 @@
     "View subscription requests": "Voir les demandes d'abonnement",
     "No notification for the moment!": "Pas de notification pour le moment !",
     "requested to follow you": "a demandé à vous suivre",
-    "has accepted your request": "a accepté votre demande",
+    "has accepted your subscription request": "a accepté votre demande d'abonnement",
     "Subscription requests": "Demandes d'abonnement",
     "There's nothing here!": "J'entends le vent... il n'y a rien ici ! 💨",
     "liked your publication": "a aimé votre publication",
     "commented on your publication": "a commenté sur votre publication",
     "mentioned you": "vous a mentionné",
-    "Subscription requested": "Abonnement demandé"
+    "Subscription requested": "Abonnement demandé",
+    "Accept": "Accepter",
+    "Decline": "Décliner",
+    "This account is private": "Ce compte est privé",
+    "Follow it to access its photos": "Suivez-le pour accéder à ses photos",
+    "Verified user": "Utilisateur certifié",
+    "Gravitalia staff": "Employé chez Gravitalia",
+    "Bug hunter": "Chercheur de bogues"
 }

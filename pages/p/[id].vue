@@ -128,6 +128,9 @@ let { data: post } = token.value ? await useFetch(`${runtimeConfig?.API_URL || "
     }
 }) : await useFetch(`${runtimeConfig?.API_URL || "https://api.gravitalia.com"}/posts/${id}`);
 
+// If no post, redirect to root
+if(!post?.value?.author) await navigateTo("/");
+
 const { data: user } = await useFetch(`${runtimeConfig?.ACCOUNT_API_URL || "https://oauth.gravitalia.com"}/users/${post.value.author}`, {
     lazy: true,
     server: false

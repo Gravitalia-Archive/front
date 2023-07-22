@@ -27,11 +27,15 @@
                 <div class="absolute pl-32 md:pl-0 md:static md:flex-left flex flex-row items-center justify-between h-11">
                     <!-- Notification -->
                     <div v-if="user" class="relative ml-3 pt-1">
-                        <svg @click="isNotificationMenuOpened = !isNotificationMenuOpened; lastReadNotification = notification?.length || 0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" :class="isNotificationMenuOpened ? 'w-6 h-6 cursor-pointer fill-gray-900 dark:fill-white' : 'w-6 h-6 cursor-pointer'">
+                        <svg v-if="!isNotificationMenuOpened" @click="isNotificationMenuOpened = !isNotificationMenuOpened; lastReadNotification = 0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 cursor-pointer">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
                         </svg>
+                        <svg v-else @click="isNotificationMenuOpened = !isNotificationMenuOpened; lastReadNotification = 0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 cursor-pointer">
+                            <path fill-rule="evenodd" d="M5.25 9a6.75 6.75 0 0113.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 01-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 11-7.48 0 24.585 24.585 0 01-4.831-1.244.75.75 0 01-.298-1.205A8.217 8.217 0 005.25 9.75V9zm4.502 8.9a2.25 2.25 0 104.496 0 25.057 25.057 0 01-4.496 0z" clip-rule="evenodd" />
+                        </svg>
+
                         <!-- Pulse notification -->
-                        <span v-if="lastReadNotification !== 0 && lastReadNotification !== notification?.length" class="absolute h-3 w-3 rounded-full bg-purple-400 opacity-75">
+                        <span v-if="lastReadNotification !== 0" class="absolute h-3 w-3 rounded-full bg-purple-400 opacity-75">
                             <span class="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-purple-400 opacity-75"></span>
                         </span>
 
@@ -53,7 +57,7 @@
                                 <div v-if="notification.length === 0" class="flex justify-center py-2 pt-4">
                                     <p class="text-sm">{{ $t("No notification for the moment!") }}</p>
                                 </div>
-                                <div v-else>
+                                <div v-else class="max-h-64">
                                     <div v-for="notif in notification" class="px-4 py-2 pt-4 text-sm">
                                         <NuxtLink :to="notif.url">
                                             <strong>{{ notif.from }}</strong> {{ $t(notif.content) }}
@@ -111,9 +115,10 @@ const emit = defineEmits(["userData"]);
 emit("userData", user);
 
 const notification = ref([]);
+const lastReadNotification = ref(0);
 onMounted(() => {
     if(user?._value?.username) {
-
+        let lastMessage = "";
         const eventSource = new EventSource("https://notification.gravitalia.com/sse", {
             withCredentials: true
         });
@@ -121,10 +126,8 @@ onMounted(() => {
         eventSource.onmessage = function(e) {
             const event = JSON.parse(e.data);
 
-            console.log(event)
-
-            if(event.type === "ping") return;
-            
+            if(event.type === "PING" || `${event.from}${event.type}${event?.to||""}` === lastMessage) return;
+                
             let content;
             switch (event.type) {
                 case "request_subscription":
@@ -132,7 +135,7 @@ onMounted(() => {
                     break;
 
                 case "subscription_accepted":
-                    content = "has accepted your request";
+                    content = "has accepted your subscription request";
                     break;
 
                 case "post_like":
@@ -150,10 +153,17 @@ onMounted(() => {
 
 
             notification.value.push({
-                url: event.type?.includes("post_") ? `/${event.to}` : `/${event.from}`,
+                url: event.type?.includes("post_") ? `/p/${event.to}` : `/${event.from}`,
                 from: event.from,
                 content
             });
+
+            lastReadNotification.value++;
+            lastMessage = `${event.from}${event.type}${event?.to||""}`;
+        };
+
+        eventSource.onerror = function(_) {
+            return;
         };
     }
 });
@@ -171,8 +181,7 @@ function logout() {
                 isProfileShown: false,
                 isMobileMenuOpened: false,
                 isNotificationMenuOpened: false,
-                openNotificationModal: false,
-                lastReadNotification: 0
+                openNotificationModal: false
             }
         },
 

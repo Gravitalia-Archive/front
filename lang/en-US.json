@@ -88,11 +88,18 @@
     "View subscription requests": "View subscription requests",
     "No notification for the moment!": "No notification for the moment!",
     "requested to follow you": "requested to follow you",
-    "has accepted your request": "has accepted your request",
+    "has accepted your subscription request": "has accepted your subscription request",
     "Subscription requests": "Subscription requests",
     "There's nothing here!": "There's nothing here!",
     "liked your publication": "liked your publication",
     "commented on your publication": "commented on your publication",
     "mentioned you": "mentioned you",
-    "Subscription requested": "Subscription requested"
+    "Subscription requested": "Subscription requested",
+    "Accept": "Accept",
+    "Decline": "Decline",
+    "This account is private": "This account is private",
+    "Follow it to access its photos": "Follow it to access its photos",
+    "Verified user": "Verified user",
+    "Gravitalia staff": "Gravitalia staff",
+    "Bug hunter": "Bug hunter"
 }

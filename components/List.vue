@@ -22,13 +22,20 @@
                         <img src="/no_data.svg" width="200" class="my-9" />
                         <p class="font-semibold">{{ $t("There's nothing here!") }}</p>
                     </div>
-                    <NuxtLink :to="'/'+user.vanity" v-else class="flex" v-for="user in list">
-                        <img :src='user.avatar ? runtimeConfig.CDN_URL+"/t_profile/"+user.avatar+".webp"  : "/avatar/"+(user.username.match("[A-z]") ? user.username.match("[A-z]")[0].toUpperCase() : "A")+".webp"' alt="" class="rounded-full w-11 h-11" />
-                        <div class="flex-col pl-1.5">
-                            <p class="font-semibold">{{ user.vanity }}</p>
-                            <p class="text-gray-500 text-sm">{{ user.vanity }}</p>
+                    <div v-else class="flex items-center justify-between" v-for="user in list">
+                        <NuxtLink :to="'/'+user.vanity" class="flex">
+                            <img :src='user.avatar ? runtimeConfig.CDN_URL+"/t_profile/"+user.avatar+".webp"  : "/avatar/"+(user.username.match("[A-z]") ? user.username.match("[A-z]")[0].toUpperCase() : "A")+".webp"' alt="" class="rounded-full w-11 h-11" />
+                            <div class="flex-col pl-1.5">
+                                <p class="font-semibold">{{ user.vanity }}</p>
+                                <p class="text-gray-500 text-sm">{{ user.vanity }}</p>
+                            </div>
+                        </NuxtLink>
+
+                        <div v-if="name === 'request'" class="space-x-2">
+                            <button @click="requestResponse('accept', user.vanity)" class="w-46 text-white bg-blue-600 dark:bg-blue-700 p-1.5 text-xs rounded-md font-semibold">{{ $t("Accept") }}</button>
+                            <button @click="requestResponse('decline', user.vanity)" class="w-46 bg-gray-200 dark:bg-gray-400 p-1.5 text-dark text-xs rounded-md font-semibold">{{ $t("Decline") }}</button>
                         </div>
-                    </NuxtLink>
+                    </div>
 				</div>
 			</div>
 		</div>
@@ -63,6 +70,19 @@
             getUser(vanity) {
                 return fetch(`${this.runtimeConfig?.ACCOUNT_API_URL || "https://oauth.gravitalia.com"}/users/${vanity}`)
                     .then(res => res.json());
+            },
+
+            requestResponse(type, user) {
+                fetch(`${this.runtimeConfig?.API_URL || "https://api.gravitalia.com"}/request/${type}?target=${user}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": useCookie("token").value
+                    }
+                })
+                .then(_ => {
+                    this.list.splice(this.list.findIndex(u => u.vanity === user), 1);
+                });
             }
         },
 
@@ -80,7 +100,6 @@
                     this.list = [];
 
                     for(const vanity of res) {
-                        console.log(vanity)
                         this.list.push(await this.getUser(vanity))
                     }
                 });
