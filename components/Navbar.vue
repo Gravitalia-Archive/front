@@ -169,7 +169,7 @@ onMounted(() => {
 });
 
 function logout() {
-    document.cookie = "token=gv;expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+    document.cookie = "token=; domain=.gravitalia.com; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     window.location.reload();
 }
 </script>
